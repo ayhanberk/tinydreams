@@ -1,65 +1,94 @@
-import Image from "next/image";
+import HeroSection from '@/components/layout/HeroSection';
+import ProductCard from '@/components/ui/ProductCard';
 
 export default function Home() {
+  const featuredProducts = [
+    {
+      id: '1',
+      title: 'Ergonomic Baby Carrier',
+      price: 129.99,
+      category: 'Gear',
+      slug: 'ergonomic-baby-carrier',
+      categorySlug: 'gear',
+      image: 'https://images.unsplash.com/photo-1544126566-475a10629b37?w=800&q=80',
+    },
+    {
+      id: '2',
+      title: 'Organic Cotton Onesie Set',
+      price: 45.00,
+      category: 'Clothing',
+      slug: 'organic-cotton-onesie-set',
+      categorySlug: 'clothing',
+      image: 'https://images.unsplash.com/photo-1522771930-78848d50259b?w=800&q=80',
+    },
+    {
+      id: '3',
+      title: 'Wooden Educational Blocks',
+      price: 35.50,
+      category: 'Toys',
+      slug: 'wooden-educational-blocks',
+      categorySlug: 'toys',
+      image: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=800&q=80',
+    },
+    {
+      id: '4',
+      title: 'Soft Plush Teddy Bear',
+      price: 25.99,
+      category: 'Toys',
+      slug: 'soft-plush-teddy-bear',
+      categorySlug: 'toys',
+      image: 'https://images.unsplash.com/photo-1559454403-b8fb9850611f?w=800&q=80',
+    }
+  ];
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="min-h-screen">
+      <HeroSection />
+
+      {/* Featured Products Section */}
+      <section className="py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Trending Now</h2>
+            <p className="text-gray-500 max-w-2xl mx-auto">
+              Handpicked essentials loved by parents and babies alike. Discover our most popular items this season.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                {...product}
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Call to Action Section */}
+      <section className="py-20 bg-secondary/10 relative overflow-hidden">
+        <div className="container mx-auto px-4 text-center relative z-10">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">Join the TinyDreams Family</h2>
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            Sign up for our newsletter and get 10% off your first order, plus exclusive access to new arrivals.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+          <form className="max-w-md mx-auto flex gap-4">
+            <input
+              type="email"
+              placeholder="Your email address"
+              className="flex-1 px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <button className="bg-primary text-white px-6 py-3 rounded-xl hover:bg-primary/90 transition-colors font-medium shadow-lg shadow-primary/20">
+              Subscribe
+            </button>
+          </form>
         </div>
-      </main>
+
+        {/* Background blobs */}
+        <div className="absolute top-0 left-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2" />
+        <div className="absolute bottom-0 right-0 w-96 h-96 bg-accent/5 rounded-full blur-3xl translate-x-1/3 translate-y-1/3" />
+      </section>
     </div>
   );
 }

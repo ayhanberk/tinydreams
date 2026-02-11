@@ -1,0 +1,86 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabase';
+import { Button } from '@/components/ui/Button';
+import { Plus, Edit, Trash2 } from 'lucide-react';
+import CategoryForm from '@/components/admin/CategoryForm';
+
+export default function AdminCategories() {
+    const [categories, setCategories] = useState<any[]>([]);
+    const [showForm, setShowForm] = useState(false);
+    const [editingCategory, setEditingCategory] = useState<any>(null);
+
+    const fetchCategories = async () => {
+        const { data, error } = await supabase
+            .from('categories')
+            .select('*, parent:categories(name)')
+            .order('name');
+        if (!error) setCategories(data || []);
+    };
+
+    useEffect(() => {
+        fetchCategories();
+    }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm('Delete category?')) return;
+        const { error } = await supabase.from('categories').delete().eq('id', id);
+        if (!error) fetchCategories();
+    };
+
+    return (
+        <div className="space-y-6">
+            <div className="flex justify-between items-center">
+                <div>
+                    <h1 className="text-2xl font-bold text-gray-900">Categories</h1>
+                    <p className="text-gray-500">Organize your products hierarchy</p>
+                </div>
+                <Button onClick={() => { setEditingCategory(null); setShowForm(true); }} className="gap-2">
+                    <Plus className="w-4 h-4" /> Add Category
+                </Button>
+            </div>
+
+            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                <table className="w-full text-left">
+                    <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+                        <tr>
+                            <th className="p-4">Name</th>
+                            <th className="p-4">Slug</th>
+                            <th className="p-4">Parent</th>
+                            <th className="p-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                        {categories.map(cat => (
+                            <tr key={cat.id} className="hover:bg-gray-50/50">
+                                <td className="p-4 font-medium flex items-center gap-2">
+                                    {cat.image_url && <img src={cat.image_url} className="w-8 h-8 rounded-lg object-cover bg-gray-100" />}
+                                    {cat.name}
+                                </td>
+                                <td className="p-4 text-sm font-mono text-gray-500">{cat.slug}</td>
+                                <td className="p-4 text-sm text-gray-500">{cat.parent?.name || '-'}</td>
+                                <td className="p-4 text-right space-x-2">
+                                    <button onClick={() => { setEditingCategory(cat); setShowForm(true); }} className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors">
+                                        <Edit className="w-4 h-4" />
+                                    </button>
+                                    <button onClick={() => handleDelete(cat.id)} className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors">
+                                        <Trash2 className="w-4 h-4" />
+                                    </button>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {showForm && (
+                <CategoryForm
+                    onClose={() => { setShowForm(false); setEditingCategory(null); }}
+                    onSuccess={() => { fetchCategories(); setShowForm(false); setEditingCategory(null); }}
+                    initialData={editingCategory}
+                />
+            )}
+        </div>
+    );
+}
