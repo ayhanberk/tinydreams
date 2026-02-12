@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { useToast } from '@/context/ToastContext';
 
 interface ProductFormProps {
     onClose: () => void;
@@ -13,6 +14,7 @@ interface ProductFormProps {
 
 export default function ProductForm({ onClose, onSuccess, initialData }: ProductFormProps) {
     const [loading, setLoading] = useState(false);
+    const { showToast } = useToast();
     const [formData, setFormData] = useState({
         title: initialData?.title || '',
         description: initialData?.description || '',
@@ -85,10 +87,11 @@ export default function ProductForm({ onClose, onSuccess, initialData }: Product
                 if (error) throw error;
             }
             onSuccess();
+            showToast(`Product ${initialData?.id ? 'updated' : 'created'} successfully`, 'success');
             onClose();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error saving product:', error);
-            alert('Error saving product');
+            showToast('Error saving product: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }

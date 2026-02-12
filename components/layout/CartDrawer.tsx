@@ -62,6 +62,22 @@ const CartDrawer = () => {
                                             <div>
                                                 <h3 className="font-semibold text-sm line-clamp-1">{item.title}</h3>
                                                 <p className="text-sm text-gray-500">{item.category}</p>
+                                                {/* Variant Info */}
+                                                {(item.color || item.size) && (
+                                                    <div className="flex space-x-2 text-xs text-gray-400 mt-1">
+                                                        {item.color && (
+                                                            <span className="flex items-center">
+                                                                <span className="w-2 h-2 rounded-full bg-gray-300 mr-1" style={{ backgroundColor: item.color.toLowerCase() }}></span>
+                                                                {item.color}
+                                                            </span>
+                                                        )}
+                                                        {item.size && (
+                                                            <span className="border border-gray-200 px-1 rounded">
+                                                                {item.size}
+                                                            </span>
+                                                        )}
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className="flex justify-between items-center">
                                                 <div className="flex items-center space-x-2">

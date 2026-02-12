@@ -24,7 +24,7 @@ export default function WishlistButton({ productId, className = '' }: WishlistBu
                 .select('id')
                 .eq('user_id', user.id)
                 .eq('product_id', productId)
-                .single();
+                .maybeSingle();
 
             if (data) setIsWishlisted(true);
         };

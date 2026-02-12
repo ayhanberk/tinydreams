@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
 import { Plus, Trash2, Power, PowerOff, Loader2, AlertCircle } from 'lucide-react';
+import { useToast } from '@/context/ToastContext';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
 export default function BannerManager() {
     const [banners, setBanners] = useState<any[]>([]);
@@ -16,6 +18,8 @@ export default function BannerManager() {
         is_active: true,
         link: ''
     });
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const { showToast } = useToast();
 
     const fetchBanners = async () => {
         setLoading(true);
@@ -42,8 +46,9 @@ export default function BannerManager() {
             setFormData({ title: '', content: '', style: 'info', is_active: true, link: '' });
             setShowForm(false);
             fetchBanners();
+            showToast('Banner created successfully', 'success');
         } else {
-            alert('Error creating banner');
+            showToast('Error creating banner', 'error');
         }
     };
 
@@ -53,13 +58,24 @@ export default function BannerManager() {
             .update({ is_active: !currentState })
             .eq('id', id);
 
-        if (!error) fetchBanners();
+        if (!error) {
+            fetchBanners();
+            showToast(`Banner ${!currentState ? 'activated' : 'deactivated'} successfully`, 'success');
+        } else {
+            showToast('Failed to update banner status', 'error');
+        }
     };
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure you want to delete this banner?')) return;
-        const { error } = await supabase.from('banners').delete().eq('id', id);
-        if (!error) fetchBanners();
+    const handleDelete = async () => {
+        if (!deleteId) return;
+        const { error } = await supabase.from('banners').delete().eq('id', deleteId);
+        if (!error) {
+            fetchBanners();
+            showToast('Banner deleted successfully', 'success');
+        } else {
+            showToast('Failed to delete banner', 'error');
+        }
+        setDeleteId(null);
     };
 
     return (
@@ -160,7 +176,7 @@ export default function BannerManager() {
                                     {banner.is_active ? <Power className="w-5 h-5" /> : <PowerOff className="w-5 h-5" />}
                                 </button>
                                 <button
-                                    onClick={() => handleDelete(banner.id)}
+                                    onClick={() => setDeleteId(banner.id)}
                                     className="p-2 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-lg transition-colors"
                                 >
                                     <Trash2 className="w-5 h-5" />
@@ -170,6 +186,15 @@ export default function BannerManager() {
                     ))
                 )}
             </div>
+
+            <ConfirmDialog
+                isOpen={!!deleteId}
+                title="Delete Banner"
+                message="Are you sure you want to delete this banner? This action cannot be undone."
+                confirmLabel="Delete"
+                onConfirm={handleDelete}
+                onCancel={() => setDeleteId(null)}
+            />
         </div>
     );
 }

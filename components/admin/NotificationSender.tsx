@@ -4,10 +4,11 @@ import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
 import { Send, Bell, CheckCircle, Loader2 } from 'lucide-react';
+import { useToast } from '@/context/ToastContext';
 
 export default function NotificationSender() {
     const [loading, setLoading] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const { showToast } = useToast();
     const [formData, setFormData] = useState({
         title: '',
         message: '',
@@ -19,7 +20,6 @@ export default function NotificationSender() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        setSuccess(false);
 
         const payload = {
             title: formData.title,
@@ -32,11 +32,10 @@ export default function NotificationSender() {
 
         if (error) {
             console.error(error);
-            alert('Failed to send notification');
+            showToast('Failed to send notification', 'error');
         } else {
-            setSuccess(true);
+            showToast('Notification sent successfully', 'success');
             setFormData(prev => ({ ...prev, title: '', message: '' })); // Reset content
-            setTimeout(() => setSuccess(false), 3000);
         }
         setLoading(false);
     };
@@ -122,8 +121,6 @@ export default function NotificationSender() {
                     <Button type="submit" className="w-full py-3" disabled={loading}>
                         {loading ? (
                             <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Sending...</>
-                        ) : success ? (
-                            <><CheckCircle className="w-4 h-4 mr-2" /> Sent Successfully!</>
                         ) : (
                             <><Send className="w-4 h-4 mr-2" /> Send Notification</>
                         )}

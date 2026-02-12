@@ -66,7 +66,8 @@ function ShopContent() {
                 // Map data to flattened structure for ProductCard
                 const mappedData = (data || []).map((p: any) => ({
                     ...p,
-                    category: p.categories?.name, // Use category name from relation
+                    image: p.image_url || p.image, // Ensure image is passed correctly
+                    category: p.categories?.name || p.category,
                     categorySlug: p.categories?.slug,
                     slug: p.slug
                 })).filter((p: any) => p.price <= priceRange);

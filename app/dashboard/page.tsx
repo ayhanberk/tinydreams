@@ -8,21 +8,37 @@ import { Package, User as UserIcon, LogOut, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 
-// Mock Order Data
-const MOCK_ORDERS = [
-    { id: 'ORD-1001', date: '2023-11-20', status: 'Delivered', total: 129.99, items: 2 },
-    { id: 'ORD-1002', date: '2023-12-05', status: 'Processing', total: 45.00, items: 3 },
-];
+// ... imports
+import { supabase } from '@/lib/supabase';
 
 export default function UserDashboard() {
     const { user, profile, loading, signOut } = useAuth();
     const router = useRouter();
+    const [orders, setOrders] = useState<any[]>([]);
 
     useEffect(() => {
         if (!loading && !user) {
             router.push('/auth/login');
         }
     }, [user, loading, router]);
+
+    useEffect(() => {
+        const fetchOrders = async () => {
+            if (!user) return;
+            const { data, error } = await supabase
+                .from('orders')
+                .select('*')
+                .eq('user_id', user.id)
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Error fetching orders:', error);
+            } else {
+                setOrders(data || []);
+            }
+        };
+        fetchOrders();
+    }, [user]);
 
     if (loading || !user) {
         return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
@@ -78,38 +94,49 @@ export default function UserDashboard() {
                 <div className="md:col-span-3 space-y-6">
                     {/* Recent Orders */}
                     <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
-                        <h3 className="font-bold text-lg mb-4">Recent Orders</h3>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
-                                    <tr>
-                                        <th className="p-4 rounded-tl-lg">Order ID</th>
-                                        <th className="p-4">Date</th>
-                                        <th className="p-4">Status</th>
-                                        <th className="p-4">Total</th>
-                                        <th className="p-4 rounded-tr-lg">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    {MOCK_ORDERS.map(order => (
-                                        <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="p-4 font-medium">{order.id}</td>
-                                            <td className="p-4 text-gray-500">{order.date}</td>
-                                            <td className="p-4">
-                                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${order.status === 'Delivered' ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'
-                                                    }`}>
-                                                    {order.status}
-                                                </span>
-                                            </td>
-                                            <td className="p-4">${order.total.toFixed(2)}</td>
-                                            <td className="p-4">
-                                                <Button size="sm" variant="outline" className="text-xs h-8">View</Button>
-                                            </td>
+                        <h3 className="font-bold text-lg mb-4">Order History</h3>
+                        {orders.length === 0 ? (
+                            <p className="text-gray-500">You haven't placed any orders yet.</p>
+                        ) : (
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left">
+                                    <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+                                        <tr>
+                                            <th className="p-4 rounded-tl-lg">Order ID</th>
+                                            <th className="p-4">Date</th>
+                                            <th className="p-4">Status</th>
+                                            <th className="p-4">Total</th>
+                                            <th className="p-4 rounded-tr-lg">Action</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {orders.map(order => (
+                                            <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                                                <td className="p-4 font-medium text-xs font-mono">{order.id.slice(0, 8)}...</td>
+                                                <td className="p-4 text-gray-500">
+                                                    {new Date(order.created_at).toLocaleDateString()}
+                                                </td>
+                                                <td className="p-4">
+                                                    <span className={`px-2 py-1 rounded-full text-xs font-medium capitalize 
+                                                        ${order.status === 'delivered' ? 'bg-green-100 text-green-700' :
+                                                            order.status === 'pending' ? 'bg-yellow-100 text-yellow-700' :
+                                                                'bg-blue-100 text-blue-700'
+                                                        }`}>
+                                                        {order.status}
+                                                    </span>
+                                                </td>
+                                                <td className="p-4">${order.total_amount.toFixed(2)}</td>
+                                                <td className="p-4">
+                                                    <Link href={`/dashboard/orders/${order.id}`}>
+                                                        <Button size="sm" variant="outline" className="text-xs h-8">View</Button>
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

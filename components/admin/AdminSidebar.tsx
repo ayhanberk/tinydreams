@@ -21,6 +21,8 @@ export default function AdminSidebar() {
 
     const links = [
         { name: 'Overview', href: '/admin/overview', icon: LayoutDashboard },
+        { name: 'Orders', href: '/admin/orders', icon: ShoppingBag },
+        { name: 'Inventory', href: '/admin/inventory', icon: Package },
         { name: 'Products', href: '/admin/products', icon: Package },
         { name: 'Categories', href: '/admin/categories', icon: FolderTree },
         { name: 'Users', href: '/admin/users', icon: Users },
@@ -45,8 +47,8 @@ export default function AdminSidebar() {
                             key={link.href}
                             href={link.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
-                                    ? 'bg-primary/10 text-primary font-medium shadow-sm'
-                                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 disconnect'
+                                ? 'bg-primary/10 text-primary font-medium shadow-sm'
+                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900 disconnect'
                                 }`}
                         >
                             <link.icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-gray-400'}`} />

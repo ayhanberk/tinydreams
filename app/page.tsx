@@ -1,45 +1,42 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import HeroSection from '@/components/layout/HeroSection';
 import ProductCard from '@/components/ui/ProductCard';
+import { supabase } from '@/lib/supabase';
 
 export default function Home() {
-  const featuredProducts = [
-    {
-      id: '1',
-      title: 'Ergonomic Baby Carrier',
-      price: 129.99,
-      category: 'Gear',
-      slug: 'ergonomic-baby-carrier',
-      categorySlug: 'gear',
-      image: 'https://images.unsplash.com/photo-1544126566-475a10629b37?w=800&q=80',
-    },
-    {
-      id: '2',
-      title: 'Organic Cotton Onesie Set',
-      price: 45.00,
-      category: 'Clothing',
-      slug: 'organic-cotton-onesie-set',
-      categorySlug: 'clothing',
-      image: 'https://images.unsplash.com/photo-1522771930-78848d50259b?w=800&q=80',
-    },
-    {
-      id: '3',
-      title: 'Wooden Educational Blocks',
-      price: 35.50,
-      category: 'Toys',
-      slug: 'wooden-educational-blocks',
-      categorySlug: 'toys',
-      image: 'https://images.unsplash.com/photo-1596461404969-9ae70f2830c1?w=800&q=80',
-    },
-    {
-      id: '4',
-      title: 'Soft Plush Teddy Bear',
-      price: 25.99,
-      category: 'Toys',
-      slug: 'soft-plush-teddy-bear',
-      categorySlug: 'toys',
-      image: 'https://images.unsplash.com/photo-1559454403-b8fb9850611f?w=800&q=80',
-    }
-  ];
+  const [featuredProducts, setFeaturedProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchFeatured = async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*, categories(slug, name)')
+        .eq('is_featured', true)
+        .limit(4);
+
+      if (error) {
+        console.error('Error fetching featured products:', error);
+      } else {
+        const mappedData = (data || []).map((p: any) => ({
+          ...p,
+          id: p.id,
+          title: p.title,
+          price: p.price,
+          image: p.image_url || p.image,
+          category: p.categories?.name || p.category,
+          categorySlug: p.categories?.slug || p.category?.toLowerCase(),
+          slug: p.slug
+        }));
+        setFeaturedProducts(mappedData);
+      }
+      setLoading(false);
+    };
+
+    fetchFeatured();
+  }, []);
 
   return (
     <div className="min-h-screen">
@@ -56,12 +53,22 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                {...product}
-              />
-            ))}
+            {loading ? (
+              [1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-80 bg-gray-100 rounded-2xl animate-pulse" />
+              ))
+            ) : featuredProducts.length > 0 ? (
+              featuredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  {...product}
+                />
+              ))
+            ) : (
+              <div className="col-span-full text-center text-gray-400 py-10">
+                No featured products currently available.
+              </div>
+            )}
           </div>
         </div>
       </section>

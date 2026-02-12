@@ -5,12 +5,17 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
 import { Plus, Edit, Trash2, Search, Filter } from 'lucide-react';
 import ProductForm from '@/components/admin/ProductForm';
+import { useToast } from '@/context/ToastContext';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
 export default function AdminProducts() {
     const [products, setProducts] = useState<any[]>([]);
     const [showForm, setShowForm] = useState(false);
     const [editingProduct, setEditingProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const { showToast } = useToast();
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -19,8 +24,14 @@ export default function AdminProducts() {
             .select('*, categories(name)')
             .order('created_at', { ascending: false });
 
-        if (error) console.error('Error fetching products:', error);
-        else setProducts(data || []);
+        if (error) {
+            console.error('Error fetching products:', error);
+            setError(error.message);
+        }
+        else {
+            setProducts(data || []);
+            setError(null);
+        }
         setLoading(false);
     };
 
@@ -28,10 +39,16 @@ export default function AdminProducts() {
         fetchProducts();
     }, []);
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Are you sure?')) return;
-        const { error } = await supabase.from('products').delete().eq('id', id);
-        if (!error) fetchProducts();
+    const handleDelete = async () => {
+        if (!deleteId) return;
+        const { error } = await supabase.from('products').delete().eq('id', deleteId);
+        if (!error) {
+            fetchProducts();
+            showToast('Product deleted successfully', 'success');
+        } else {
+            showToast('Failed to delete product', 'error');
+        }
+        setDeleteId(null);
     };
 
     return (
@@ -56,6 +73,12 @@ export default function AdminProducts() {
                         <Filter className="w-4 h-4" /> Filter
                     </Button>
                 </div>
+
+                {error && (
+                    <div className="p-4 mx-4 my-2 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm">
+                        <b>Error loading products:</b> {error}
+                    </div>
+                )}
 
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
@@ -97,7 +120,7 @@ export default function AdminProducts() {
                                             <button onClick={() => { setEditingProduct(product); setShowForm(true); }} className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors">
                                                 <Edit className="w-4 h-4" />
                                             </button>
-                                            <button onClick={() => handleDelete(product.id)} className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors">
+                                            <button onClick={() => setDeleteId(product.id)} className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors">
                                                 <Trash2 className="w-4 h-4" />
                                             </button>
                                         </td>
@@ -116,6 +139,15 @@ export default function AdminProducts() {
                     initialData={editingProduct}
                 />
             )}
+
+            <ConfirmDialog
+                isOpen={!!deleteId}
+                title="Delete Product"
+                message="Are you sure you want to delete this product? This action cannot be undone."
+                confirmLabel="Delete"
+                onConfirm={handleDelete}
+                onCancel={() => setDeleteId(null)}
+            />
         </div>
     );
 }

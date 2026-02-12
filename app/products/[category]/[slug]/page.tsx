@@ -21,6 +21,10 @@ export default function ProductDetailsPage() {
     const [quantity, setQuantity] = useState(1);
     const { addToCart } = useCart();
 
+    const [selectedColor, setSelectedColor] = useState<string | null>(null);
+    const [selectedSize, setSelectedSize] = useState<string | null>(null);
+    const [error, setError] = useState<string | null>(null);
+
     useEffect(() => {
         const fetchProduct = async () => {
             if (!slug) return;
@@ -61,6 +65,16 @@ export default function ProductDetailsPage() {
     }
 
     const handleAddToCart = () => {
+        if (product.colors && product.colors.length > 0 && !selectedColor) {
+            setError('Please select a color');
+            return;
+        }
+        if (product.sizes && product.sizes.length > 0 && !selectedSize) {
+            setError('Please select a size');
+            return;
+        }
+        setError(null);
+
         addToCart({
             id: product.id,
             title: product.title,
@@ -68,6 +82,8 @@ export default function ProductDetailsPage() {
             image: product.image_url || product.image,
             quantity: quantity,
             category: product.category,
+            color: selectedColor || undefined,
+            size: selectedSize || undefined,
         });
     };
 
@@ -123,7 +139,59 @@ export default function ProductDetailsPage() {
                     </p>
 
                     {/* Actions */}
-                    <div className="space-y-4 pt-6 border-t border-gray-100">
+                    <div className="space-y-6 pt-6 border-t border-gray-100">
+
+                        {/* Variants Selection */}
+                        <div className="space-y-4">
+                            {product.colors && product.colors.length > 0 && (
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-900 mb-2">Color</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {product.colors.map((color: string) => (
+                                            <button
+                                                key={color}
+                                                onClick={() => { setSelectedColor(color); setError(null); }}
+                                                className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all
+                                                    ${selectedColor === color
+                                                        ? 'border-primary bg-primary/5 text-primary ring-1 ring-primary'
+                                                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                                                    }`}
+                                            >
+                                                {color}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {product.sizes && product.sizes.length > 0 && (
+                                <div>
+                                    <h3 className="text-sm font-medium text-gray-900 mb-2">Size</h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {product.sizes.map((size: string) => (
+                                            <button
+                                                key={size}
+                                                onClick={() => { setSelectedSize(size); setError(null); }}
+                                                className={`w-12 h-12 rounded-lg border text-sm font-medium flex items-center justify-center transition-all
+                                                    ${selectedSize === size
+                                                        ? 'border-primary bg-primary/5 text-primary ring-1 ring-primary'
+                                                        : 'border-gray-200 text-gray-600 hover:border-gray-300 hover:bg-gray-50'
+                                                    }`}
+                                            >
+                                                {size}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {error && (
+                                <p className="text-red-500 text-sm animate-pulse">
+                                    {error}
+                                </p>
+                            )}
+                        </div>
+
                         <div className="flex items-center space-x-4">
                             <div className="flex items-center border border-gray-200 rounded-lg">
                                 <button
@@ -162,9 +230,6 @@ export default function ProductDetailsPage() {
             <div className="mt-20">
                 <Reviews productId={product.id} />
             </div>
-
-            {/* Suggestions Section Placeholder */}
-            {/* ... */}
         </div>
     );
 }

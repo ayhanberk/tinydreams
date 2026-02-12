@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
 import { User, Shield, ShieldOff, Search, Loader2 } from 'lucide-react';
+import { useToast } from '@/context/ToastContext';
 
 export default function UserManagement() {
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
+    const { showToast } = useToast();
 
     const fetchUsers = async () => {
         setLoading(true);
@@ -44,7 +46,9 @@ export default function UserManagement() {
             console.error('Error updating role:', error);
             // Revert on error
             fetchUsers();
-            alert('Failed to update role');
+            showToast('Failed to update role', 'error');
+        } else {
+            showToast(`User role updated to ${newRole}`, 'success');
         }
     };
 

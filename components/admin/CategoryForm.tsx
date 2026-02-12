@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/Button';
 import { X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { useToast } from '@/context/ToastContext';
 
 interface CategoryFormProps {
     onClose: () => void;
@@ -13,6 +14,7 @@ interface CategoryFormProps {
 
 export default function CategoryForm({ onClose, onSuccess, initialData }: CategoryFormProps) {
     const [loading, setLoading] = useState(false);
+    const { showToast } = useToast();
     const [categories, setCategories] = useState<any[]>([]);
     const [formData, setFormData] = useState({
         name: initialData?.name || '',
@@ -65,10 +67,11 @@ export default function CategoryForm({ onClose, onSuccess, initialData }: Catego
                 if (error) throw error;
             }
             onSuccess();
+            showToast(`Category ${initialData?.id ? 'updated' : 'created'} successfully`, 'success');
             onClose();
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error saving category:', error);
-            alert('Error saving category');
+            showToast('Error saving category: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }

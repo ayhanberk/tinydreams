@@ -5,11 +5,15 @@ import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
 import { Plus, Edit, Trash2 } from 'lucide-react';
 import CategoryForm from '@/components/admin/CategoryForm';
+import { useToast } from '@/context/ToastContext';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
 export default function AdminCategories() {
     const [categories, setCategories] = useState<any[]>([]);
     const [showForm, setShowForm] = useState(false);
     const [editingCategory, setEditingCategory] = useState<any>(null);
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const { showToast } = useToast();
 
     const fetchCategories = async () => {
         const { data, error } = await supabase
@@ -23,10 +27,16 @@ export default function AdminCategories() {
         fetchCategories();
     }, []);
 
-    const handleDelete = async (id: string) => {
-        if (!confirm('Delete category?')) return;
-        const { error } = await supabase.from('categories').delete().eq('id', id);
-        if (!error) fetchCategories();
+    const handleDelete = async () => {
+        if (!deleteId) return;
+        const { error } = await supabase.from('categories').delete().eq('id', deleteId);
+        if (!error) {
+            fetchCategories();
+            showToast('Category deleted successfully', 'success');
+        } else {
+            showToast('Failed to delete category. It might be in use.', 'error');
+        }
+        setDeleteId(null);
     };
 
     return (
@@ -64,7 +74,7 @@ export default function AdminCategories() {
                                     <button onClick={() => { setEditingCategory(cat); setShowForm(true); }} className="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors">
                                         <Edit className="w-4 h-4" />
                                     </button>
-                                    <button onClick={() => handleDelete(cat.id)} className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors">
+                                    <button onClick={() => setDeleteId(cat.id)} className="p-2 hover:bg-red-50 text-red-600 rounded-lg transition-colors">
                                         <Trash2 className="w-4 h-4" />
                                     </button>
                                 </td>
@@ -81,6 +91,15 @@ export default function AdminCategories() {
                     initialData={editingCategory}
                 />
             )}
+
+            <ConfirmDialog
+                isOpen={!!deleteId}
+                title="Delete Category"
+                message="Are you sure you want to delete this category? This will fail if there are products or subcategories linked to it."
+                confirmLabel="Delete"
+                onConfirm={handleDelete}
+                onCancel={() => setDeleteId(null)}
+            />
         </div>
     );
 }
