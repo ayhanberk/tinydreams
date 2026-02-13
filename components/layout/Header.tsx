@@ -185,6 +185,12 @@ const Header = () => {
                                 </button>
                                 {user ? (
                                     <>
+                                        {profile?.role === 'admin' && (
+                                            <Link href="/admin/overview" className="flex items-center space-x-2 text-purple-600 font-medium" onClick={() => setIsOpen(false)}>
+                                                <Settings className="w-5 h-5" />
+                                                <span>Admin Panel</span>
+                                            </Link>
+                                        )}
                                         <Link href="/dashboard" className="flex items-center space-x-2 text-foreground" onClick={() => setIsOpen(false)}>
                                             <User className="w-5 h-5" />
                                             <span>Dashboard</span>

@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Star, Truck, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
 import { supabase } from '@/lib/supabase';
 import Reviews from '@/components/product/Reviews';
@@ -71,17 +72,19 @@ export default function ProductDetailsPage() {
                     animate={{ opacity: 1, x: 0 }}
                     className="space-y-4"
                 >
-                    <div className="aspect-square bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 p-8 flex items-center justify-center">
+                    <div className="aspect-square bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 p-8 flex items-center justify-center relative">
                         {product.image_url ? (
-                            <img
+                            <Image
                                 src={product.image_url}
                                 alt={product.title}
-                                className="max-w-full max-h-full object-contain hover:scale-105 transition-transform duration-500"
+                                fill
+                                className="object-contain p-8 hover:scale-105 transition-transform duration-500"
+                                sizes="(max-width: 768px) 100vw, 50vw"
+                                priority
                             />
                         ) : (
-                            <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400">No Image</div>
+                            <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-400 font-medium">No Image</div>
                         )}
-
                     </div>
                 </motion.div>
 
@@ -110,19 +113,19 @@ export default function ProductDetailsPage() {
 
                     {/* Actions */}
                     <div className="space-y-4 pt-6 border-t border-gray-100">
-                        <div className="flex items-center space-x-4">
-                            <div className="flex items-center border border-gray-200 rounded-lg">
+                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                            <div className="flex items-center border border-gray-200 rounded-lg justify-between sm:justify-start">
                                 <button
-                                    className="px-4 py-2 hover:bg-gray-50 text-xl"
+                                    className="px-6 py-3 hover:bg-gray-50 text-xl"
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
                                 >-</button>
-                                <span className="px-4 font-medium">{quantity}</span>
+                                <span className="px-4 font-medium min-w-[3rem] text-center">{quantity}</span>
                                 <button
-                                    className="px-4 py-2 hover:bg-gray-50 text-xl"
+                                    className="px-6 py-3 hover:bg-gray-50 text-xl"
                                     onClick={() => setQuantity(quantity + 1)}
                                 >+</button>
                             </div>
-                            <Button size="lg" className="flex-1 rounded-xl shadow-lg shadow-primary/20" onClick={handleAddToCart}>
+                            <Button size="lg" className="flex-1 py-6 rounded-xl shadow-lg shadow-primary/20 text-lg" onClick={handleAddToCart}>
                                 Add to Cart - ${(product.price * quantity).toFixed(2)}
                             </Button>
                         </div>

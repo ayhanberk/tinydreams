@@ -9,7 +9,9 @@ import Link from 'next/link';
 import { useCart } from '@/context/CartContext';
 import { supabase } from '@/lib/supabase';
 import Reviews from '@/components/product/Reviews';
-import WishlistButton from '@/components/product/WishlistButton';
+import WishlistButton from '@/components/wishlist/WishlistButton';
+import ProductTabs from '@/components/product/ProductTabs';
+import RelatedProducts from '@/components/product/RelatedProducts';
 
 export default function ProductDetailsPage() {
     const params = useParams();
@@ -223,7 +225,18 @@ export default function ProductDetailsPage() {
                             <span>2 Year Warranty</span>
                         </div>
                     </div>
+
+                    <ProductTabs
+                        description={product.description}
+                        specifications={product.specifications}
+                    />
+
                 </motion.div>
+            </div>
+
+            {/* Related Products */}
+            <div className="mt-20 border-t border-gray-100 pt-10">
+                <RelatedProducts categoryId={product.category} currentProductId={product.id} />
             </div>
 
             {/* Reviews Section */}

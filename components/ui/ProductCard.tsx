@@ -3,8 +3,9 @@
 import { motion } from 'framer-motion';
 import { ShoppingBag, Star } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
-import WishlistButton from '@/components/product/WishlistButton';
+import WishlistButton from '@/components/wishlist/WishlistButton';
 
 interface ProductCardProps {
     id: string;
@@ -24,10 +25,12 @@ const ProductCard = ({ id, title, price, image, category, slug, categorySlug }: 
         >
             {/* Image Container */}
             <div className="relative aspect-[4/5] overflow-hidden bg-gray-100 group">
-                <img
+                <Image
                     src={image}
                     alt={title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                 />
                 <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                     <WishlistButton productId={id} />

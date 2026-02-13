@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const HeroSection = () => {
     return (
@@ -31,28 +32,28 @@ const HeroSection = () => {
                     transition={{ duration: 0.8, ease: "easeOut" }}
                     className="space-y-6"
                 >
-                    <h1 className="text-5xl md:text-6xl font-extrabold leading-tight text-foreground">
+                    <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight text-foreground">
                         Dream Big, <br />
                         <span className="text-primary">Little One.</span>
                     </h1>
                     <p className="text-lg md:text-xl text-gray-600 max-w-lg">
                         Discover improved comfort and innovative essentials for your baby unique journey. Premium quality, designed with love.
                     </p>
-                    <div className="flex space-x-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                         <Link href="/shop">
-                            <Button size="lg" className="rounded-full shadow-xl shadow-primary/20">
+                            <Button size="lg" className="rounded-full shadow-xl shadow-primary/20 w-full sm:w-auto">
                                 Shop Now
                             </Button>
                         </Link>
                         <Link href="/about">
-                            <Button variant="outline" size="lg" className="rounded-full border-2">
+                            <Button variant="outline" size="lg" className="rounded-full border-2 w-full sm:w-auto">
                                 Our Story
                             </Button>
                         </Link>
                     </div>
 
                     {/* Trust Badges */}
-                    <div className="pt-8 flex items-center space-x-6 text-sm font-medium text-gray-500">
+                    <div className="pt-8 flex items-center space-x-6 text-sm font-medium text-gray-500 overflow-x-auto whitespace-nowrap pb-2">
                         <div className="flex items-center space-x-2">
                             <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                             <span>Eco-Friendly</span>
@@ -69,17 +70,18 @@ const HeroSection = () => {
                     initial={{ opacity: 0, x: 50 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
-                    className="relative"
+                    className="relative hidden md:block lg:block"
                 >
                     <div className="relative z-10 glass-card p-4 rounded-3xl transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                        {/* Placeholder for Hero Image - In a real app, use next/image */}
                         <div className="aspect-[4/5] bg-gray-200 rounded-2xl overflow-hidden relative">
                             {/* Gradient Overlay */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent z-10" />
-                            <img
+                            <Image
                                 src="https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=1000&auto=format&fit=crop"
                                 alt="Baby sleeping peacefully"
-                                className="w-full h-full object-cover"
+                                fill
+                                className="object-cover"
+                                priority
                             />
                         </div>
 
@@ -88,7 +90,7 @@ const HeroSection = () => {
                             initial={{ y: 20, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.8 }}
-                            className="absolute bottom-10 -left-6 bg-white p-4 rounded-xl shadow-lg flex items-center space-x-3"
+                            className="absolute bottom-10 -left-6 bg-white p-4 rounded-xl shadow-lg sm:flex items-center space-x-3 hidden"
                         >
                             <div className="bg-orange-100 p-2 rounded-full">
                                 <span className="text-xl">⭐</span>

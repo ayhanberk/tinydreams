@@ -1,84 +1,84 @@
-'use client';
-
-import { motion } from 'framer-motion';
-import { Heart, Shield, Star, Users } from 'lucide-react';
+import Image from 'next/image';
+import { Heart, ShieldCheck, Smile } from 'lucide-react';
 
 export default function AboutPage() {
     return (
-        <div className="min-h-screen pt-20">
+        <div className="bg-white">
             {/* Hero Section */}
-            <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-secondary/10" />
-                <div className="container mx-auto px-4 relative z-10 text-center">
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="text-5xl md:text-7xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-6"
-                    >
-                        Our Story
-                    </motion.h1>
-                    <motion.p
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed"
-                    >
-                        TinyDreams was born from a simple belief: every little dream deserves the perfect start. We curate the safest, most innovative products for your growing family.
-                    </motion.p>
+            <div className="relative py-20 bg-rose-50 overflow-hidden">
+                <div className="absolute inset-0 opacity-10">
+                    <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                        <path d="M0 100 C 20 0 50 0 100 100 Z" fill="currentColor" className="text-rose-200" />
+                    </svg>
                 </div>
-            </section>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+                    <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 font-heading">
+                        Dreaming Big for Little Ones
+                    </h1>
+                    <p className="text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
+                        At TinyDreams, we believe every child deserves a world filled with comfort, safety, and imagination. Our journey began with a simple promise: to create products that parents trust and babies love.
+                    </p>
+                </div>
+            </div>
+
+            {/* Mission Section */}
+            <div className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                    <div className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
+                        {/* Placeholder for now, would be a real team or product image */}
+                        <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
+                            <span className="text-6xl font-bold opacity-30">TinyDreams</span>
+                        </div>
+                    </div>
+                    <div className="space-y-6">
+                        <h2 className="text-3xl font-bold text-gray-900">Our Mission</h2>
+                        <p className="text-gray-600 text-lg leading-relaxed">
+                            We are dedicated to providing premium quality baby products that blend functionality with beautiful design. We understand the joys and challenges of parenting, which is why every item in our collection is carefully curated and rigorously tested.
+                        </p>
+                        <p className="text-gray-600 text-lg leading-relaxed">
+                            From our softest organic cottons to our innovative nursery essentials, we are here to support you through every milestone of your little one's growth.
+                        </p>
+                    </div>
+                </div>
+            </div>
 
             {/* Values Section */}
-            <section className="py-20 bg-white">
-                <div className="container mx-auto px-4">
-                    <div className="grid md:grid-cols-3 gap-12">
-                        {[
-                            { icon: Shield, title: 'Safety First', desc: 'Every product undergoes rigorous safety testing. We prioritize non-toxic, organic materials for your peace of mind.' },
-                            { icon: Heart, title: 'Made with Love', desc: 'We hand-pick items that we would use for our own children. Careful curation is at the heart of what we do.' },
-                            { icon: Users, title: 'Community', desc: 'We are more than a store; we are a community of parents supporting each other through the journey of raising little ones.' }
-                        ].map((item, idx) => (
-                            <motion.div
-                                key={idx}
-                                initial={{ opacity: 0, y: 20 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: idx * 0.2 }}
-                                className="text-center space-y-4 p-8 rounded-2xl bg-gray-50 hover:shadow-lg transition-shadow duration-300"
-                            >
-                                <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto shadow-sm text-primary">
-                                    <item.icon className="w-8 h-8" />
-                                </div>
-                                <h3 className="text-xl font-bold text-gray-900">{item.title}</h3>
-                                <p className="text-gray-600 leading-relaxed">{item.desc}</p>
-                            </motion.div>
-                        ))}
+            <div className="bg-gray-50 py-20">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="text-center mb-16">
+                        <h2 className="text-3xl font-bold text-gray-900">Why Parents Trust Us</h2>
                     </div>
-                </div>
-            </section>
-
-            {/* Stats/Trust Section */}
-            <section className="py-20 bg-gradient-to-br from-indigo-900 to-purple-900 text-white">
-                <div className="container mx-auto px-4 text-center">
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-                        <div>
-                            <div className="text-4xl font-bold mb-2">10k+</div>
-                            <div className="text-white/70">Happy Families</div>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div className="bg-white p-8 rounded-2xl shadow-sm text-center transform hover:-translate-y-2 transition-transform duration-300">
+                            <div className="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <ShieldCheck className="w-8 h-8 text-blue-500" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-4">Safety First</h3>
+                            <p className="text-gray-600">
+                                All our products meet or exceed international safety standards. We use non-toxic materials and rigorous testing protocols.
+                            </p>
                         </div>
-                        <div>
-                            <div className="text-4xl font-bold mb-2">500+</div>
-                            <div className="text-white/70">Premium Products</div>
+                        <div className="bg-white p-8 rounded-2xl shadow-sm text-center transform hover:-translate-y-2 transition-transform duration-300">
+                            <div className="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Heart className="w-8 h-8 text-rose-500" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-4">Made with Love</h3>
+                            <p className="text-gray-600">
+                                Crafted with care and attention to detail. We choose soft, durable fabrics that are gentle on your baby's delicate skin.
+                            </p>
                         </div>
-                        <div>
-                            <div className="text-4xl font-bold mb-2">4.9</div>
-                            <div className="text-white/70 flex items-center justify-center gap-1"><Star className="w-4 h-4 fill-current" /> Rating</div>
-                        </div>
-                        <div>
-                            <div className="text-4xl font-bold mb-2">24/7</div>
-                            <div className="text-white/70">Support</div>
+                        <div className="bg-white p-8 rounded-2xl shadow-sm text-center transform hover:-translate-y-2 transition-transform duration-300">
+                            <div className="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <Smile className="w-8 h-8 text-green-500" />
+                            </div>
+                            <h3 className="text-xl font-bold text-gray-900 mb-4">Customer Happiness</h3>
+                            <p className="text-gray-600">
+                                We are committed to your satisfaction. Our friendly support team is always ready to help you find the perfect product.
+                            </p>
                         </div>
                     </div>
                 </div>
-            </section>
+            </div>
         </div>
     );
 }

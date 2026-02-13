@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import ProductCard from '@/components/ui/ProductCard';
 import { Button } from '@/components/ui/Button';
-import { Filter, SlidersHorizontal, Search } from 'lucide-react';
+import { Filter, SlidersHorizontal, Search, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useSearchParams, useRouter } from 'next/navigation';
 
@@ -21,6 +21,7 @@ function ShopContent() {
     const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'All');
     const [searchQuery, setSearchQuery] = useState(searchParam);
     const [priceRange, setPriceRange] = useState(500);
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     // Fetch Categories
     useEffect(() => {
@@ -124,11 +125,16 @@ function ShopContent() {
                     </form>
 
                     <div className="flex space-x-2">
-                        <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center space-x-2 lg:hidden"
+                            onClick={() => setIsFilterOpen(true)}
+                        >
                             <Filter className="w-4 h-4" />
                             <span>Filter</span>
                         </Button>
-                        <Button variant="outline" size="sm" className="flex items-center space-x-2">
+                        <Button variant="outline" size="sm" className="hidden lg:flex items-center space-x-2">
                             <SlidersHorizontal className="w-4 h-4" />
                             <span>Sort</span>
                         </Button>
@@ -137,8 +143,27 @@ function ShopContent() {
             </div>
 
             <div className="flex flex-col lg:flex-row gap-8">
-                {/* Sidebar */}
-                <aside className="w-full lg:w-64 space-y-8">
+                {/* Backdrop for mobile filters */}
+                {isFilterOpen && (
+                    <div
+                        className="fixed inset-0 bg-black/50 z-50 lg:hidden backdrop-blur-sm transition-opacity"
+                        onClick={() => setIsFilterOpen(false)}
+                    />
+                )}
+
+                {/* Sidebar / Drawer */}
+                <aside className={`
+                    fixed inset-y-0 left-0 w-80 bg-white z-[60] p-6 space-y-8 transform transition-transform duration-300 lg:static lg:w-64 lg:p-0 lg:bg-transparent lg:z-0 lg:translate-x-0
+                    ${isFilterOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+                `}>
+                    <div className="flex items-center justify-between mb-6 lg:hidden">
+                        <h2 className="text-xl font-bold">Filters</h2>
+                        <Button variant="ghost" size="sm" onClick={() => setIsFilterOpen(false)} className="p-1">
+                            <X className="w-6 h-6" />
+                            <span className="sr-only">Close</span>
+                        </Button>
+                    </div>
+
                     {/* Categories */}
                     <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
                         <h3 className="font-semibold mb-4">Categories</h3>
@@ -149,7 +174,7 @@ function ShopContent() {
                                     id="all-cats"
                                     name="category"
                                     checked={selectedCategory === 'All'}
-                                    onChange={() => handleCategoryChange('All')}
+                                    onChange={() => { handleCategoryChange('All'); setIsFilterOpen(false); }}
                                     className="text-primary focus:ring-primary"
                                 />
                                 <label htmlFor="all-cats" className="ml-2 text-gray-600 cursor-pointer hover:text-primary">
@@ -163,7 +188,7 @@ function ShopContent() {
                                         id={category.id}
                                         name="category"
                                         checked={selectedCategory === category.id}
-                                        onChange={() => handleCategoryChange(category.id)}
+                                        onChange={() => { handleCategoryChange(category.id); setIsFilterOpen(false); }}
                                         className="text-primary focus:ring-primary"
                                     />
                                     <label htmlFor={category.id} className="ml-2 text-gray-600 cursor-pointer hover:text-primary">

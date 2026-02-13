@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 
 export default function CheckoutPage() {
@@ -170,8 +171,8 @@ export default function CheckoutPage() {
                     <div className="space-y-4 max-h-96 overflow-y-auto pr-2">
                         {items.map((item) => (
                             <div key={item.id} className="flex gap-4 items-center">
-                                <div className="w-16 h-16 bg-white rounded-lg overflow-hidden border border-gray-200 flex-shrink-0">
-                                    <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                <div className="w-16 h-16 bg-white rounded-lg overflow-hidden border border-gray-200 flex-shrink-0 relative">
+                                    <Image src={item.image} alt={item.title} fill className="object-cover" sizes="64px" />
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="font-medium text-sm line-clamp-1">{item.title}</h3>
