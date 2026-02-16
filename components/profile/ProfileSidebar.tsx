@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { User, Package, MapPin, Heart, LogOut } from 'lucide-react';
+import { User, Package, MapPin, Heart, LogOut, Baby, Gift, Sparkles, Settings } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
 export default function ProfileSidebar() {
@@ -11,9 +11,13 @@ export default function ProfileSidebar() {
 
     const links = [
         { name: 'Dashboard', href: '/profile', icon: User },
+        { name: 'My Family', href: '/profile/family', icon: Baby },
         { name: 'My Orders', href: '/profile/orders', icon: Package },
         { name: 'Addresses', href: '/profile/addresses', icon: MapPin },
-        { name: 'Wishlist', href: '/wishlist', icon: Heart },
+        { name: 'Wishlist', href: '/profile/wishlist', icon: Heart },
+        { name: 'Settings', href: '/profile/settings', icon: Settings },
+        { name: 'Gift Registry', href: '/profile/registry', icon: Gift },
+        { name: 'For You', href: '/profile/recommendations', icon: Sparkles },
     ];
 
     return (
@@ -26,8 +30,8 @@ export default function ProfileSidebar() {
                             key={link.href}
                             href={link.href}
                             className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive
-                                    ? 'bg-primary/10 text-primary font-medium'
-                                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
+                                ? 'bg-primary/10 text-primary font-medium'
+                                : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
                                 }`}
                         >
                             <link.icon className={`w-5 h-5 ${isActive ? 'text-primary' : 'text-gray-400'}`} />

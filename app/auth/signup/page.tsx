@@ -1,10 +1,63 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { supabase } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/context/ToastContext';
 
 export default function SignupPage() {
+    const router = useRouter();
+    const { showToast } = useToast();
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        password: ''
+    });
+
+    const handleSignup = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const { data, error } = await supabase.auth.signUp({
+                email: formData.email,
+                password: formData.password,
+                options: {
+                    data: {
+                        first_name: formData.firstName,
+                        last_name: formData.lastName,
+                        full_name: `${formData.firstName} ${formData.lastName}`
+                    }
+                }
+            });
+
+            if (error) throw error;
+
+            if (data.user) {
+                // If there's no trigger, we might need to manually create the profile
+                // But usually we rely on triggers. If it fails, we can add manual insertion here.
+                // Checking if user is identified immediately (if email confirmation is off)
+                if (data.session) {
+                    showToast('Account created successfully!', 'success');
+                    router.push('/profile');
+                } else {
+                    showToast('Please check your email to verify your account.', 'success');
+                    router.push('/auth/login');
+                }
+            }
+        } catch (error: any) {
+            console.error('Signup error:', error);
+            showToast(error.message || 'Failed to sign up', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-secondary/10 to-primary/5 px-4">
             <motion.div
@@ -18,12 +71,15 @@ export default function SignupPage() {
                     <p className="text-gray-500">Join TinyDreams for exclusive rewards</p>
                 </div>
 
-                <form className="space-y-4">
+                <form onSubmit={handleSignup} className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                             <input
                                 type="text"
+                                required
+                                value={formData.firstName}
+                                onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
                                 className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all bg-white/50"
                                 placeholder="John"
                             />
@@ -32,6 +88,9 @@ export default function SignupPage() {
                             <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                             <input
                                 type="text"
+                                required
+                                value={formData.lastName}
+                                onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
                                 className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all bg-white/50"
                                 placeholder="Doe"
                             />
@@ -41,6 +100,9 @@ export default function SignupPage() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
                         <input
                             type="email"
+                            required
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                             className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all bg-white/50"
                             placeholder="you@example.com"
                         />
@@ -49,19 +111,27 @@ export default function SignupPage() {
                         <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
                         <input
                             type="password"
+                            required
+                            minLength={6}
+                            value={formData.password}
+                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                             className="w-full px-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all bg-white/50"
                             placeholder="••••••••"
                         />
-                        <p className="text-xs text-gray-400 mt-1">Must be at least 8 characters</p>
+                        <p className="text-xs text-gray-400 mt-1">Must be at least 6 characters</p>
                     </div>
 
                     <div className="flex items-center space-x-2">
-                        <input type="checkbox" id="terms" className="rounded border-gray-300 text-primary focus:ring-primary" />
+                        <input type="checkbox" id="terms" required className="rounded border-gray-300 text-primary focus:ring-primary" />
                         <label htmlFor="terms" className="text-sm text-gray-600">I agree to the <Link href="/terms" className="text-primary hover:underline">Terms</Link> and <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link></label>
                     </div>
 
-                    <Button className="w-full py-6 text-lg font-semibold shadow-lg shadow-primary/20">
-                        Create Account
+                    <Button
+                        type="submit"
+                        className="w-full py-6 text-lg font-semibold shadow-lg shadow-primary/20"
+                        disabled={loading}
+                    >
+                        {loading ? 'Creating Account...' : 'Create Account'}
                     </Button>
                 </form>
 

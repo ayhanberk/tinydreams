@@ -1,5 +1,5 @@
 import { getUserProfile, getUserOrders } from '@/actions/profile';
-import { Package, MapPin } from 'lucide-react';
+import { Package, MapPin, Heart, Baby, Settings } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function ProfileDashboard() {
@@ -16,11 +16,25 @@ export default async function ProfileDashboard() {
                     Welcome back, {profile?.full_name || 'Dreamer'}!
                 </h1>
                 <p className="text-gray-500">
-                    Manage your orders, addresses, and account details here.
+                    Manage your family, orders, and addresses here.
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <Link href="/profile/family" className="block group">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-full hover:border-pink-200 transition-colors">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="p-3 bg-pink-50 rounded-xl group-hover:bg-pink-100 transition-colors">
+                                <Baby className="w-6 h-6 text-pink-500" />
+                            </div>
+                            <h2 className="text-lg font-semibold text-gray-800">My Family</h2>
+                        </div>
+                        <p className="text-gray-500">
+                            Add your children to get personalized product recommendations.
+                        </p>
+                    </div>
+                </Link>
+
                 <Link href="/profile/orders" className="block group">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-full hover:border-blue-200 transition-colors">
                         <div className="flex items-center gap-4 mb-4">
@@ -36,13 +50,24 @@ export default async function ProfileDashboard() {
                                     <span>{new Date(recentOrder.created_at).toLocaleDateString()}</span>
                                     <span className="text-green-600 font-bold">${recentOrder.total_amount?.toFixed(2)}</span>
                                 </p>
-                                <span className="inline-block mt-3 px-2 py-1 bg-gray-100 text-gray-600 text-xs rounded-lg capitalize">
-                                    {recentOrder.status}
-                                </span>
                             </div>
                         ) : (
                             <p className="text-gray-500">No orders yet. Start shopping!</p>
                         )}
+                    </div>
+                </Link>
+
+                <Link href="/profile/wishlist" className="block group">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-full hover:border-rose-200 transition-colors">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="p-3 bg-rose-50 rounded-xl group-hover:bg-rose-100 transition-colors">
+                                <Heart className="w-6 h-6 text-rose-500" />
+                            </div>
+                            <h2 className="text-lg font-semibold text-gray-800">Wishlist</h2>
+                        </div>
+                        <p className="text-gray-500">
+                            Keep track of products you love.
+                        </p>
                     </div>
                 </Link>
 
@@ -55,7 +80,21 @@ export default async function ProfileDashboard() {
                             <h2 className="text-lg font-semibold text-gray-800">Addresses</h2>
                         </div>
                         <p className="text-gray-500">
-                            Manage your shipping and billing addresses for faster checkout.
+                            Manage your shipping and billing addresses.
+                        </p>
+                    </div>
+                </Link>
+
+                <Link href="/profile/settings" className="block group">
+                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-full hover:border-gray-200 transition-colors">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="p-3 bg-gray-50 rounded-xl group-hover:bg-gray-100 transition-colors">
+                                <Settings className="w-6 h-6 text-gray-600" />
+                            </div>
+                            <h2 className="text-lg font-semibold text-gray-800">Settings</h2>
+                        </div>
+                        <p className="text-gray-500">
+                            Update your personal info and security.
                         </p>
                     </div>
                 </Link>
@@ -63,3 +102,4 @@ export default async function ProfileDashboard() {
         </div>
     );
 }
+

@@ -11,7 +11,7 @@ export async function getFeaturedProducts() {
             id,
             title,
             price,
-            images,
+            image_url,
             slug,
             category,
             categories (
@@ -31,7 +31,7 @@ export async function getFeaturedProducts() {
         id: p.id,
         title: p.title,
         price: p.price,
-        image: p.images?.[0] || '/placeholder.png', // Adapter for ProductCard
+        image: p.image_url || '/placeholder.png', // Adapter for ProductCard
         category: p.categories?.name || p.category,
         categorySlug: p.categories?.slug || p.category?.toLowerCase(),
         slug: p.slug
@@ -47,7 +47,7 @@ export async function getRelatedProducts(categoryId: string, currentProductId: s
             id,
             title,
             price,
-            images,
+            image_url,
             slug,
             category,
             categories (
@@ -68,7 +68,7 @@ export async function getRelatedProducts(categoryId: string, currentProductId: s
         id: p.id,
         title: p.title,
         price: p.price,
-        image: p.images?.[0] || '/placeholder.png',
+        image: p.image_url || '/placeholder.png',
         category: p.categories?.name || p.category,
         categorySlug: p.categories?.slug || p.category?.toLowerCase(),
         slug: p.slug

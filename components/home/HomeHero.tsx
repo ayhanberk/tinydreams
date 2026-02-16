@@ -2,13 +2,14 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
 const slides = [
     {
         id: 1,
-        image: '/hero-baby-sleep.jpg', // Placeholder, needs real image
+        image: 'https://images.unsplash.com/photo-1555252333-9f8e92e65df9?q=80&w=1600&auto=format&fit=crop', // Baby clothing/sleep
         title: 'Peaceful Sleep for Little Dreamers',
         subtitle: 'Discover our premium collection of organic sleepwear and bedding.',
         cta: 'Shop Sleep',
@@ -16,7 +17,7 @@ const slides = [
     },
     {
         id: 2,
-        image: '/hero-baby-bath.jpg',
+        image: 'https://images.unsplash.com/photo-1596464716127-f9a8759d1b28?q=80&w=1600&auto=format&fit=crop', // Toys/Play
         title: 'Splish, Splash, Snuggle',
         subtitle: 'Gentle bathtime essentials for delicate skin.',
         cta: 'Shop Bathtime',
@@ -24,7 +25,7 @@ const slides = [
     },
     {
         id: 3,
-        image: '/hero-baby-play.jpg',
+        image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?q=80&w=1600&auto=format&fit=crop', // Bedroom/Nursery
         title: 'Play & Learn',
         subtitle: 'Toys designed to spark imagination and development.',
         cta: 'Shop Toys',
@@ -55,10 +56,13 @@ export default function HomeHero() {
                     {/* Background Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-r from-gray-900/60 to-transparent z-10" />
 
-                    {/* Placeholder Image (Use real images in prod) */}
-                    <div className="absolute inset-0 bg-gray-300 flex items-center justify-center">
-                        <span className="text-9xl opacity-10 font-bold">{slide.title.charAt(0)}</span>
-                    </div>
+                    <Image
+                        src={slide.image}
+                        alt={slide.title}
+                        fill
+                        className="object-cover"
+                        priority={index === 0}
+                    />
                 </div>
             ))}
 

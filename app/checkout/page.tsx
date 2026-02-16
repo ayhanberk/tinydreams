@@ -121,7 +121,7 @@ export default function CheckoutPage() {
             console.log('4. Success!');
             setSuccess(true);
             setTimeout(() => {
-                router.push('/dashboard');
+                router.push('/profile');
             }, 2000);
 
         } catch (err: any) {

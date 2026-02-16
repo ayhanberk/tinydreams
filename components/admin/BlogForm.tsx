@@ -14,7 +14,7 @@ interface BlogFormProps {
 
 export default function BlogForm({ initialData }: BlogFormProps) {
     const router = useRouter();
-    const { addToast } = useToast();
+    const { showToast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         title: initialData?.title || '',
@@ -48,20 +48,20 @@ export default function BlogForm({ initialData }: BlogFormProps) {
                     .update(formData)
                     .eq('id', initialData.id);
                 if (error) throw error;
-                addToast('Post updated successfully', 'success');
+                showToast('Post updated successfully', 'success');
             } else {
                 // Create
                 const { error } = await supabase
                     .from('blog_posts')
                     .insert(formData);
                 if (error) throw error;
-                addToast('Post created successfully', 'success');
+                showToast('Post created successfully', 'success');
             }
             router.push('/admin/blog');
             router.refresh();
         } catch (error: any) {
             console.error(error);
-            addToast(error.message, 'error');
+            showToast(error.message, 'error');
         } finally {
             setIsLoading(false);
         }

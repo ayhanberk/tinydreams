@@ -10,7 +10,7 @@ interface AdminSettingsFormProps {
 }
 
 export default function AdminSettingsForm({ initialSettings }: AdminSettingsFormProps) {
-    const { addToast } = useToast();
+    const { showToast } = useToast();
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
@@ -27,7 +27,7 @@ export default function AdminSettingsForm({ initialSettings }: AdminSettingsForm
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target;
-        setFormData(prev => ({
+        setFormData((prev: typeof smtpConfig) => ({
             ...prev,
             [name]: type === 'checkbox' ? checked : value
         }));
@@ -39,10 +39,10 @@ export default function AdminSettingsForm({ initialSettings }: AdminSettingsForm
 
         try {
             await updateSystemSettings('smtp_config', formData);
-            addToast('Settings updated successfully', 'success');
+            showToast('Settings updated successfully', 'success');
         } catch (error) {
             console.error(error);
-            addToast('Failed to update settings', 'error');
+            showToast('Failed to update settings', 'error');
         } finally {
             setIsLoading(false);
         }

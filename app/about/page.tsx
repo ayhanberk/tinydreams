@@ -25,10 +25,12 @@ export default function AboutPage() {
             <div className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <div className="relative aspect-square rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
-                        {/* Placeholder for now, would be a real team or product image */}
-                        <div className="w-full h-full bg-gray-100 flex items-center justify-center text-gray-300">
-                            <span className="text-6xl font-bold opacity-30">TinyDreams</span>
-                        </div>
+                        <Image
+                            src="https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=1600&auto=format&fit=crop"
+                            alt="TinyDreams Philosophy"
+                            fill
+                            className="object-cover"
+                        />
                     </div>
                     <div className="space-y-6">
                         <h2 className="text-3xl font-bold text-gray-900">Our Mission</h2>

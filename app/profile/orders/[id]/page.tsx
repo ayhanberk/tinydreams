@@ -1,6 +1,6 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
@@ -9,6 +9,7 @@ import { ArrowLeft, Package, MapPin, CreditCard, Clock } from 'lucide-react';
 
 export default function OrderDetailsPage() {
     const params = useParams();
+    const router = useRouter();
     const { id } = params as { id: string };
 
     const [order, setOrder] = useState<any>(null);
@@ -59,8 +60,8 @@ export default function OrderDetailsPage() {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center">
                 <h2 className="text-2xl font-bold mb-4">Order not found</h2>
-                <Link href="/dashboard">
-                    <Button>Back to Dashboard</Button>
+                <Link href="/profile/orders">
+                    <Button>Back to Orders</Button>
                 </Link>
             </div>
         );
@@ -72,8 +73,8 @@ export default function OrderDetailsPage() {
         : order.shipping_address;
 
     return (
-        <div className="container mx-auto px-4 py-12">
-            <Link href="/dashboard" className="inline-flex items-center text-gray-500 hover:text-primary mb-8 transition-colors">
+        <div className="space-y-6">
+            <Link href="/profile/orders" className="inline-flex items-center text-gray-500 hover:text-primary transition-colors">
                 <ArrowLeft className="w-4 h-4 mr-2" />
                 Back to Orders
             </Link>
@@ -94,15 +95,14 @@ export default function OrderDetailsPage() {
                         </div>
                         <p className="text-gray-500 flex items-center text-sm">
                             <Clock className="w-4 h-4 mr-1" />
-                            Placed on {new Date(order.created_at).toLocaleDateString()} at {new Date(order.created_at).toLocaleTimeString()}
+                            Placed on {new Date(order.created_at).toLocaleDateString()}
                         </p>
                     </div>
-                    {/* Admin Actions could go here */}
                 </div>
 
-                <div className="p-6 md:p-8 grid md:grid-cols-3 gap-8">
+                <div className="p-6 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Order Items */}
-                    <div className="md:col-span-2 space-y-6">
+                    <div className="lg:col-span-2 space-y-6">
                         <h2 className="font-semibold text-lg flex items-center">
                             <Package className="w-5 h-5 mr-2 text-primary" />
                             Items
@@ -124,7 +124,6 @@ export default function OrderDetailsPage() {
                                         <p className="text-sm text-gray-500 mt-1">
                                             Qty: {item.quantity} × ${item.price_at_purchase.toFixed(2)}
                                         </p>
-                                        {/* Variants */}
                                         {(item.color || item.size) && (
                                             <div className="flex space-x-3 mt-2 text-xs text-gray-600">
                                                 {item.color && (
@@ -143,16 +142,11 @@ export default function OrderDetailsPage() {
                             ))}
                         </div>
 
-                        {/* Order Totals */}
                         <div className="border-t border-gray-100 pt-4 flex justify-end">
                             <div className="w-full md:w-1/2 space-y-2">
                                 <div className="flex justify-between text-gray-600">
                                     <span>Subtotal</span>
                                     <span>${order.total_amount.toFixed(2)}</span>
-                                </div>
-                                <div className="flex justify-between text-gray-600">
-                                    <span>Shipping</span>
-                                    <span className="text-green-600">Free</span>
                                 </div>
                                 <div className="flex justify-between font-bold text-xl pt-2 border-t border-dashed border-gray-200">
                                     <span>Total</span>
@@ -163,12 +157,11 @@ export default function OrderDetailsPage() {
                     </div>
 
                     {/* Sidebar Info */}
-                    <div className="space-y-8">
-                        {/* Shipping Address */}
+                    <div className="space-y-6">
                         <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
                             <h2 className="font-semibold text-lg flex items-center mb-4">
                                 <MapPin className="w-5 h-5 mr-2 text-primary" />
-                                Shipping Address
+                                Shipping
                             </h2>
                             {shippingAddress ? (
                                 <address className="not-italic text-sm text-gray-600 space-y-1">
@@ -182,11 +175,10 @@ export default function OrderDetailsPage() {
                             )}
                         </div>
 
-                        {/* Payment Info (Mock) */}
                         <div className="bg-gray-50 p-6 rounded-xl border border-gray-100">
                             <h2 className="font-semibold text-lg flex items-center mb-4">
                                 <CreditCard className="w-5 h-5 mr-2 text-primary" />
-                                Payment Method
+                                Payment
                             </h2>
                             <div className="flex items-center text-sm text-gray-600">
                                 <div className="w-8 h-5 bg-gray-200 rounded mr-2"></div>

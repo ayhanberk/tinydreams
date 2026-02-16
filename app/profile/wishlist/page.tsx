@@ -7,7 +7,7 @@ export default async function WishlistPage() {
     const wishlistItems = await getWishlist();
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="space-y-6">
             <div className="flex items-center gap-3 mb-8">
                 <div className="p-3 bg-rose-50 rounded-2xl">
                     <Heart className="w-8 h-8 text-rose-500 fill-rose-500" />
@@ -21,7 +21,7 @@ export default async function WishlistPage() {
             </div>
 
             {wishlistItems.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {wishlistItems.map((product: any) => (
                         <ProductCard key={product.id} {...product} />
                     ))}

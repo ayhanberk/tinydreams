@@ -43,11 +43,13 @@ export async function getUserOrders() {
             order_items (
                 id,
                 quantity,
-                price,
+                price_at_purchase,
+                color,
+                size,
                 product_id,
                 products (
-                    name,
-                    images
+                    title,
+                    image_url
                 )
             )
         `)

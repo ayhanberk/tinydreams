@@ -14,6 +14,7 @@ interface Toast {
 
 interface ToastContextType {
     showToast: (message: string, type?: ToastType) => void;
+    addToast: (message: string, type?: ToastType) => void;
 }
 
 const ToastContext = createContext<ToastContextType | undefined>(undefined);
@@ -36,7 +37,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     return (
-        <ToastContext.Provider value={{ showToast }}>
+        <ToastContext.Provider value={{ showToast, addToast: showToast }}>
             {children}
             <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2 pointer-events-none">
                 <AnimatePresence>
@@ -47,9 +48,9 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
                             animate={{ opacity: 1, scale: 1, x: 0 }}
                             exit={{ opacity: 0, scale: 0.9, x: 20 }}
                             className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-2xl border ${toast.type === 'success' ? 'bg-green-50 border-green-100 text-green-800' :
-                                    toast.type === 'error' ? 'bg-red-50 border-red-100 text-red-800' :
-                                        toast.type === 'warning' ? 'bg-amber-50 border-amber-100 text-amber-800' :
-                                            'bg-white border-gray-100 text-gray-800'
+                                toast.type === 'error' ? 'bg-red-50 border-red-100 text-red-800' :
+                                    toast.type === 'warning' ? 'bg-amber-50 border-amber-100 text-amber-800' :
+                                        'bg-white border-gray-100 text-gray-800'
                                 }`}
                         >
                             {toast.type === 'success' && <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />}

@@ -14,18 +14,18 @@ interface ReviewActionsProps {
 
 export default function ReviewActions({ reviewId, isApproved }: ReviewActionsProps) {
     const [loading, setLoading] = useState(false);
-    const { addToast } = useToast();
     const router = useRouter();
+    const { showToast } = useToast();
 
     const handleApprove = async () => {
         setLoading(true);
         try {
             await approveReview(reviewId);
-            addToast('Review approved', 'success');
+            showToast('Review approved', 'success');
             router.refresh(); // Refresh to update list
         } catch (error) {
             console.error(error);
-            addToast('Failed to approve review', 'error');
+            showToast('Failed to approve review', 'error');
         } finally {
             setLoading(false);
         }
@@ -36,11 +36,11 @@ export default function ReviewActions({ reviewId, isApproved }: ReviewActionsPro
         setLoading(true);
         try {
             await deleteReview(reviewId);
-            addToast('Review deleted', 'success');
+            showToast('Review deleted', 'success');
             router.refresh();
         } catch (error) {
             console.error(error);
-            addToast('Failed to delete review', 'error');
+            showToast('Failed to delete review', 'error');
         } finally {
             setLoading(false);
         }

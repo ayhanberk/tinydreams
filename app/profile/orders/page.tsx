@@ -58,17 +58,22 @@ export default async function OrdersPage() {
                                         <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img
-                                                src={item.products?.images?.[0] || '/placeholder.png'}
-                                                alt={item.products?.name}
+                                                src={item.products?.image_url || '/placeholder.png'}
+                                                alt={item.products?.title}
                                                 className="w-full h-full object-cover"
                                             />
                                         </div>
                                         <div className="flex-1">
-                                            <h4 className="font-medium text-gray-900 line-clamp-1">{item.products?.name}</h4>
-                                            <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                                            <h4 className="font-medium text-gray-900 line-clamp-1">{item.products?.title}</h4>
+                                            <div className="flex items-center gap-2 text-sm text-gray-500">
+                                                <span>Qty: {item.quantity}</span>
+                                                {(item.color || item.size) && <span className="text-gray-300">|</span>}
+                                                {item.color && <span>{item.color}</span>}
+                                                {item.size && <span>{item.size}</span>}
+                                            </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className="font-medium text-gray-900">${item.price?.toFixed(2)}</p>
+                                            <p className="font-medium text-gray-900">${item.price_at_purchase?.toFixed(2)}</p>
                                         </div>
                                     </div>
                                 ))}

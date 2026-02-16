@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Menu, X, ShoppingCart, User, Settings } from 'lucide-react';
+import { Menu, X, ShoppingCart, User, Settings, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
@@ -132,7 +132,7 @@ const Header = () => {
                                     <Settings className="w-5 h-5 text-purple-600 group-hover:rotate-45 transition-transform" />
                                 </Link>
                             )}
-                            <Link href="/dashboard" className="p-2 hover:bg-secondary/10 rounded-full transition-colors">
+                            <Link href="/profile" className="p-2 hover:bg-secondary/10 rounded-full transition-colors">
                                 <User className="w-5 h-5 text-primary font-bold" />
                             </Link>
                             <button onClick={signOut} className="text-sm text-gray-500 hover:text-red-500 transition-colors">
@@ -191,9 +191,13 @@ const Header = () => {
                                                 <span>Admin Panel</span>
                                             </Link>
                                         )}
-                                        <Link href="/dashboard" className="flex items-center space-x-2 text-foreground" onClick={() => setIsOpen(false)}>
+                                        <Link href="/profile" className="flex items-center space-x-2 text-foreground" onClick={() => setIsOpen(false)}>
                                             <User className="w-5 h-5" />
                                             <span>Dashboard</span>
+                                        </Link>
+                                        <Link href="/profile/family" className="flex items-center space-x-2 text-foreground" onClick={() => setIsOpen(false)}>
+                                            <Heart className="w-5 h-5" />
+                                            <span>My Family</span>
                                         </Link>
                                         <button onClick={() => { signOut(); setIsOpen(false); }} className="flex items-center space-x-2 text-red-500">
                                             <span>Sign Out</span>

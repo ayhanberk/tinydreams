@@ -114,7 +114,7 @@ export default function AdminAnalyticsDashboard({ data }: { data: AnalyticsData 
                                 />
                                 <Tooltip
                                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                                    formatter={(value: number) => [`$${value.toLocaleString()}`, 'Revenue']}
+                                    formatter={(value: any) => [`$${value.toLocaleString()}`, 'Revenue']}
                                 />
                                 <Legend />
                                 <Line
