@@ -71,7 +71,7 @@ export default function AdminOrders() {
         } finally {
             setLoading(false);
         }
-    }, [page, statusFilter, supabase]);
+    }, [page, statusFilter]);
 
     useEffect(() => {
         fetchOrders();

@@ -62,7 +62,7 @@ export default function AdminOrderDetails() {
         } finally {
             setLoading(false);
         }
-    }, [id, supabase]);
+    }, [id]);
 
     useEffect(() => {
         fetchOrderDetails();
