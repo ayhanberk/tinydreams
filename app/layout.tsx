@@ -8,6 +8,7 @@ import { CartProvider } from "@/context/CartContext";
 import CartDrawer from "@/components/layout/CartDrawer";
 import { AuthProvider } from "@/context/AuthContext";
 import { ToastProvider } from "@/context/ToastContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -62,18 +63,20 @@ export default function RootLayout({
   return (
     <html lang="tr">
       <body className={`${montserrat.variable} antialiased font-sans bg-background text-foreground`}>
-        <SiteBanner />
         <ToastProvider>
-          <AuthProvider>
-            <CartProvider>
-              <Header />
-              <CartDrawer />
-              <main className="min-h-screen pt-20">
-                {children}
-              </main>
-              <Footer />
-            </CartProvider>
-          </AuthProvider>
+          <LanguageProvider>
+            <AuthProvider>
+              <CartProvider>
+                <Header />
+                <CartDrawer />
+                <main className="min-h-screen pt-20">
+                  <SiteBanner />
+                  {children}
+                </main>
+                <Footer />
+              </CartProvider>
+            </AuthProvider>
+          </LanguageProvider>
         </ToastProvider>
       </body>
     </html>

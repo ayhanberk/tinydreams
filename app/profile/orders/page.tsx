@@ -1,5 +1,5 @@
 import { getUserOrders } from '@/actions/profile';
-import { Package, ChevronRight } from 'lucide-react';
+import { Package } from 'lucide-react';
 import Link from 'next/link';
 
 export default async function OrdersPage() {
@@ -13,8 +13,9 @@ export default async function OrdersPage() {
                 <div className="bg-white p-12 rounded-2xl shadow-sm border border-gray-100 text-center">
                     <Package className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                     <h2 className="text-xl font-semibold text-gray-900 mb-2">No orders yet</h2>
+                    <p className="text-gray-500 mt-1">Here&apos;s a history of your orders.</p>
                     <p className="text-gray-500 mb-8 max-w-md mx-auto">
-                        Looks like you haven't placed any orders yet. Once you do, they will appear here.
+                        Looks like you haven&apos;t placed any orders yet. Once you do, they will appear here.
                     </p>
                     <Link
                         href="/shop"
@@ -25,6 +26,7 @@ export default async function OrdersPage() {
                 </div>
             ) : (
                 <div className="space-y-4">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {orders.map((order: any) => (
                         <div key={order.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                             <div className="bg-gray-50 border-b border-gray-100 p-4 flex flex-wrap items-center justify-between gap-4">
@@ -53,6 +55,7 @@ export default async function OrdersPage() {
                             </div>
 
                             <div className="p-4 space-y-4">
+                                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                                 {order.order_items?.map((item: any) => (
                                     <div key={item.id} className="flex items-center gap-4">
                                         <div className="w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 relative">

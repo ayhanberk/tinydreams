@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { LayoutDashboard, Package, Users, TrendingUp } from 'lucide-react';
+import { Package, Users, TrendingUp } from 'lucide-react';
 
 export default function AdminOverview() {
     const stats = [

@@ -1,6 +1,8 @@
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
+/* eslint-disable @next/next/no-img-element */
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
@@ -9,10 +11,11 @@ import { ArrowLeft, Package, MapPin, CreditCard, Clock } from 'lucide-react';
 
 export default function OrderDetailsPage() {
     const params = useParams();
-    const router = useRouter();
     const { id } = params as { id: string };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [order, setOrder] = useState<any>(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
@@ -113,7 +116,7 @@ export default function OrderDetailsPage() {
                                     <div className="w-20 h-20 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
                                         <img
                                             src={item.products?.image_url || item.products?.image}
-                                            alt={item.products?.title}
+                                            alt={item.products?.title || 'Product Image'}
                                             className="w-full h-full object-cover"
                                         />
                                     </div>

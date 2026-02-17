@@ -2,10 +2,11 @@
 
 import { deleteUserAddress } from '@/actions/profile';
 import { useToast } from '@/context/ToastContext';
-import { Trash2, CheckCircle, MapPin } from 'lucide-react';
+import { Trash2, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export default function AddressListModule({ initialAddresses }: { initialAddresses: any[] }) {
     const { addToast } = useToast();
     const router = useRouter();

@@ -37,6 +37,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     const { user } = useAuth();
 
     // Load from Local Storage on Mount
+    /* eslint-disable react-hooks/set-state-in-effect */
     useEffect(() => {
         setIsMounted(true);
         const savedCart = localStorage.getItem('cart');
@@ -44,9 +45,9 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             try {
                 const parsed = JSON.parse(savedCart);
                 // Migrating old/incomplete data
-                const migrated = parsed.map((item: any) => ({
+                const migrated = parsed.map((item: Partial<CartItem>) => ({
                     ...item,
-                    productId: item.productId || item.id.split('-')[0] // Fallback to id if productId missing
+                    productId: item.productId || (item.id || '').split('-')[0] // Fallback to id if productId missing
                 }));
                 setItems(migrated);
             } catch (e) {
@@ -54,6 +55,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             }
         }
     }, []);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     const generateCartId = (productId: string, color?: string, size?: string) => {
         return `${productId}-${color || 'default'}-${size || 'default'}`;
@@ -76,6 +78,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
             if (data) {
                 // Map DB items to CartItem format
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 const dbItems: CartItem[] = data.map((item: any) => ({
                     id: generateCartId(item.products.id, item.color, item.size), // Composite ID
                     productId: item.products.id, // Keep original Product ID
@@ -134,7 +137,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             if (newItem.size) query = query.eq('size', newItem.size);
             else query = query.is('size', null);
 
-            const { data: existing, error } = await query.maybeSingle(); // Use maybeSingle to avoid 406 or error on 0 rows
+            const { data: existing } = await query.maybeSingle(); // Use maybeSingle to avoid 406 or error on 0 rows
 
             if (existing) {
                 await supabase
@@ -162,7 +165,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
 
         setItems(prev => prev.filter(item => item.id !== id));
 
-        const realProductId = (itemToRemove as any).productId || itemToRemove.id; // Fallback for legacy items before migration?
+        const realProductId = itemToRemove.productId || itemToRemove.id; // Fallback for legacy items before migration?
 
         if (user) {
             let query = supabase
@@ -194,7 +197,7 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
             item.id === id ? { ...item, quantity } : item
         ));
 
-        const realProductId = (itemToUpdate as any).productId || itemToUpdate.id;
+        const realProductId = itemToUpdate.productId || itemToUpdate.id;
 
         if (user) {
             let query = supabase

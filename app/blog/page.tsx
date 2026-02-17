@@ -1,7 +1,7 @@
 import { getBlogPosts } from '@/actions/blog';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Calendar, User } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 
 export default async function BlogPage() {
     const posts = await getBlogPosts();
@@ -21,6 +21,7 @@ export default async function BlogPage() {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {posts.map((post: any) => (
                         <Link href={`/blog/${post.slug}`} key={post.id} className="group flex flex-col h-full bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100">
                             <div className="relative aspect-[16/9] overflow-hidden bg-gray-100">

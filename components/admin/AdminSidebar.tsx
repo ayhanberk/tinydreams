@@ -14,7 +14,8 @@ import {
     FolderTree,
     ShoppingBag,
     Star,
-    X
+    X,
+    Globe
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 
@@ -34,12 +35,12 @@ export default function AdminSidebar({ isOpen, onClose }: AdminSidebarProps) {
         { name: 'Inventory', href: '/admin/inventory', icon: Package },
         { name: 'Products', href: '/admin/products', icon: Package },
         { name: 'Categories', href: '/admin/categories', icon: FolderTree },
-        { name: 'Orders', href: '/admin/orders', icon: ShoppingBag },
         { name: 'Users', href: '/admin/users', icon: Users },
         { name: 'Blog', href: '/admin/blog', icon: Megaphone },
         { name: 'Reviews', href: '/admin/reviews', icon: Star },
         { name: 'Banners', href: '/admin/banners', icon: Megaphone }, // Maybe remove Banners if Blog covers it, or keep both? Keep both.
         { name: 'Notifications', href: '/admin/notifications', icon: Bell },
+        { name: 'Translations', href: '/admin/translations', icon: Globe },
         { name: 'Settings', href: '/admin/settings', icon: Settings },
     ];
 

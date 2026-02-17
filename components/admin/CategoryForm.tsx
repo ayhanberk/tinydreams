@@ -6,16 +6,24 @@ import { X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/context/ToastContext';
 
+interface CategoryData {
+    id?: string;
+    name?: string;
+    slug?: string;
+    parent_id?: string;
+    image_url?: string;
+}
+
 interface CategoryFormProps {
     onClose: () => void;
     onSuccess: () => void;
-    initialData?: any;
+    initialData?: CategoryData;
 }
 
 export default function CategoryForm({ onClose, onSuccess, initialData }: CategoryFormProps) {
     const [loading, setLoading] = useState(false);
     const { showToast } = useToast();
-    const [categories, setCategories] = useState<any[]>([]);
+    const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
     const [formData, setFormData] = useState({
         name: initialData?.name || '',
         slug: initialData?.slug || '',
@@ -26,7 +34,7 @@ export default function CategoryForm({ onClose, onSuccess, initialData }: Catego
     useEffect(() => {
         const fetchCategories = async () => {
             const { data } = await supabase.from('categories').select('id, name');
-            if (data) setCategories(data.filter((c: any) => c.id !== initialData?.id)); // Prevent setting self as parent
+            if (data) setCategories(data.filter((c: { id: string }) => c.id !== initialData?.id)); // Prevent setting self as parent
         };
         fetchCategories();
     }, [initialData]);
@@ -69,9 +77,9 @@ export default function CategoryForm({ onClose, onSuccess, initialData }: Catego
             onSuccess();
             showToast(`Category ${initialData?.id ? 'updated' : 'created'} successfully`, 'success');
             onClose();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Error saving category:', error);
-            showToast('Error saving category: ' + error.message, 'error');
+            showToast('Error saving category: ' + (error instanceof Error ? error.message : 'Unknown error'), 'error');
         } finally {
             setLoading(false);
         }

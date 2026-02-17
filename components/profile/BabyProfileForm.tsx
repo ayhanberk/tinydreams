@@ -9,7 +9,7 @@ import { useToast } from '@/context/ToastContext';
 interface BabyProfileFormProps {
     isOpen: boolean;
     onClose: () => void;
-    initialData?: any;
+    initialData?: Record<string, string>;
 }
 
 export function BabyProfileForm({ isOpen, onClose, initialData }: BabyProfileFormProps) {
@@ -37,8 +37,8 @@ export function BabyProfileForm({ isOpen, onClose, initialData }: BabyProfileFor
                 showToast('Profile added', 'success');
             }
             onClose();
-        } catch (error: any) {
-            showToast(error.message, 'error');
+        } catch (error: unknown) {
+            showToast(error instanceof Error ? error.message : 'An error occurred', 'error');
         } finally {
             setIsLoading(false);
         }

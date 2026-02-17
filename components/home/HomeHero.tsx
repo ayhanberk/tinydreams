@@ -17,7 +17,7 @@ const slides = [
     },
     {
         id: 2,
-        image: 'https://images.unsplash.com/photo-1596464716127-f9a8759d1b28?q=80&w=1600&auto=format&fit=crop', // Toys/Play
+        image: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?q=80&w=1600&auto=format&fit=crop', // Toys/Play (New working URL)
         title: 'Splish, Splash, Snuggle',
         subtitle: 'Gentle bathtime essentials for delicate skin.',
         cta: 'Shop Bathtime',

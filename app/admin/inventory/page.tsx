@@ -3,12 +3,27 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
-import { Search, Package, AlertTriangle, Save, RefreshCw, Layers } from 'lucide-react';
+import { Search, AlertTriangle, RefreshCw, Layers } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
+interface InventoryItem {
+    id: string;
+    product_id: string;
+    color: string | null;
+    size: string | null;
+    stock_quantity: number;
+    sku: string | null;
+    created_at: string;
+    products?: {
+        title: string;
+        image_url: string;
+        category: string;
+    };
+}
+
 export default function AdminInventory() {
-    const [inventory, setInventory] = useState<any[]>([]);
+    const [inventory, setInventory] = useState<InventoryItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [updating, setUpdating] = useState<string | null>(null);
@@ -75,9 +90,9 @@ export default function AdminInventory() {
             }
             showToast(`Sync complete! Created ${createdCount} new variant entries.`, 'success');
             fetchInventory();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Sync Error:', error);
-            showToast('Sync failed: ' + error.message, 'error');
+            showToast('Sync failed: ' + (error instanceof Error ? error.message : 'Unknown error'), 'error');
         } finally {
             setLoading(false);
             setShowSyncConfirm(false);
@@ -110,7 +125,7 @@ export default function AdminInventory() {
     );
 
     // Grouping by product title for cleaner display
-    const groupedInventory: Record<string, any[]> = {};
+    const groupedInventory: Record<string, InventoryItem[]> = {};
     filteredInventory.forEach(item => {
         const title = item.products?.title || 'Unknown Product';
         if (!groupedInventory[title]) groupedInventory[title] = [];
@@ -183,7 +198,8 @@ export default function AdminInventory() {
                                         <td className="p-4">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden border border-gray-200 flex-shrink-0">
-                                                    {item.products?.image_url && <img src={item.products.image_url} className="w-full h-full object-cover" />}
+                                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                    {item.products?.image_url && <img src={item.products.image_url} alt={item.products.title} className="w-full h-full object-cover" />}
                                                 </div>
                                                 <div className="flex flex-col">
                                                     <span className="font-bold text-gray-900 text-sm">{item.products?.title}</span>

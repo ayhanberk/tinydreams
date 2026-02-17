@@ -49,9 +49,9 @@ export default function AddressForm({ onSuccess }: { onSuccess: () => void }) {
                 is_default: false
             });
             onSuccess();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            addToast(error.message || 'Failed to add address', 'error');
+            addToast(error instanceof Error ? error.message : 'Failed to add address', 'error');
         } finally {
             setIsLoading(false);
         }

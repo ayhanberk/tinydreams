@@ -1,4 +1,4 @@
-import { Star, StarHalf } from 'lucide-react';
+import { Star } from 'lucide-react';
 
 interface StarRatingProps {
     rating: number; // 0 to 5
@@ -26,8 +26,8 @@ export default function StarRating({ rating, size = 16, editable = false, onChan
                     <Star
                         size={size}
                         className={`${i < rating
-                                ? 'fill-yellow-400 text-yellow-400'
-                                : 'fill-gray-100 text-gray-300'
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'fill-gray-100 text-gray-300'
                             }`}
                     />
                 </button>

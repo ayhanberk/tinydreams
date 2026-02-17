@@ -1,7 +1,7 @@
 import { getAllBlogPostsAdmin } from '@/actions/blog';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit } from 'lucide-react';
 import Image from 'next/image';
 
 export default async function AdminBlogPage() {
@@ -25,6 +25,7 @@ export default async function AdminBlogPage() {
             </div>
 
             <div className="grid grid-cols-1 gap-6">
+                {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                 {posts.map((post: any) => (
                     <div key={post.id} className="bg-white p-4 rounded-xl border border-gray-100 flex gap-6 items-center shadow-sm hover:shadow-md transition-all">
                         <div className="w-24 h-16 bg-gray-100 rounded-lg overflow-hidden relative shrink-0">

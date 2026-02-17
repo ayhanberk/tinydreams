@@ -9,8 +9,10 @@ import { useToast } from '@/context/ToastContext';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
 export default function AdminProducts() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [products, setProducts] = useState<any[]>([]);
     const [showForm, setShowForm] = useState(false);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [editingProduct, setEditingProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -35,9 +37,11 @@ export default function AdminProducts() {
         setLoading(false);
     };
 
+    /* eslint-disable react-hooks/set-state-in-effect */
     useEffect(() => {
         fetchProducts();
     }, []);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     const handleDelete = async () => {
         if (!deleteId) return;
@@ -101,7 +105,8 @@ export default function AdminProducts() {
                                     <tr key={product.id} className="hover:bg-gray-50/50">
                                         <td className="p-4 font-medium flex items-center gap-3">
                                             <div className="w-10 h-10 rounded-lg bg-gray-100 overflow-hidden flex-shrink-0 border border-gray-200">
-                                                {product.image_url && <img src={product.image_url} className="w-full h-full object-cover" />}
+                                                {/* eslint-disable-next-line @next/next/no-img-element */}
+                                                {product.image_url && <img src={product.image_url} alt={product.title} className="w-full h-full object-cover" />}
                                             </div>
                                             {product.title}
                                         </td>

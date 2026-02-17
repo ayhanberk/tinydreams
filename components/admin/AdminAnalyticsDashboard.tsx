@@ -8,8 +8,6 @@ import {
     CartesianGrid,
     Tooltip,
     ResponsiveContainer,
-    BarChart,
-    Bar,
     Legend
 } from 'recharts';
 import { Users, ShoppingBag, DollarSign, AlertTriangle } from 'lucide-react';
@@ -114,7 +112,7 @@ export default function AdminAnalyticsDashboard({ data }: { data: AnalyticsData 
                                 />
                                 <Tooltip
                                     contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                                    formatter={(value: any) => [`$${value.toLocaleString()}`, 'Revenue']}
+                                    formatter={(value: number | undefined) => [`$${(value ?? 0).toLocaleString()}`, 'Revenue']}
                                 />
                                 <Legend />
                                 <Line

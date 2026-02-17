@@ -7,6 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 
 export default function SiteBanner() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [banner, setBanner] = useState<any>(null);
     const [isVisible, setIsVisible] = useState(true);
 
@@ -50,6 +51,7 @@ export default function SiteBanner() {
         premium: 'bg-gradient-to-r from-primary to-secondary text-white',
     };
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const icons: Record<string, any> = {
         info: AlertCircle,
         success: CheckCircle,

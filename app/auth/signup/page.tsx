@@ -50,9 +50,9 @@ export default function SignupPage() {
                     router.push('/auth/login');
                 }
             }
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error('Signup error:', error);
-            showToast(error.message || 'Failed to sign up', 'error');
+            showToast(error instanceof Error ? error.message : 'Failed to sign up', 'error');
         } finally {
             setLoading(false);
         }

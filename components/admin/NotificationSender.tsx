@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
-import { Send, Bell, CheckCircle, Loader2 } from 'lucide-react';
+import { Send, Bell, Loader2 } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 
 export default function NotificationSender() {

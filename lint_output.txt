@@ -1,0 +1,16 @@
+
+> tinydreams@0.1.0 lint
+> eslint
+
+
+C:\Ayhan\workarea\AstroArea\AstronTinyDreams\tinydreams\app\admin\orders\[id]\page.tsx
+  69:8  warning  React Hook useEffect has a missing dependency: 'fetchOrderDetails'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Ayhan\workarea\AstroArea\AstronTinyDreams\tinydreams\app\admin\orders\page.tsx
+  78:8  warning  React Hook useEffect has a missing dependency: 'fetchOrders'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+
+C:\Ayhan\workarea\AstroArea\AstronTinyDreams\tinydreams\app\admin\translations\page.tsx
+  142:23  warning  'parts' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+✖ 3 problems (0 errors, 3 warnings)
+

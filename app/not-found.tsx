@@ -9,7 +9,7 @@ export default function NotFound() {
             <div className="absolute">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">Page Not Found</h2>
                 <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                    Oops! It seems like you've wandered into a dreamy void. The page you are looking for doesn't exist or has been moved.
+                    Oops! It seems like you&apos;ve wandered into a dreamy void. The page you are looking for doesn&apos;t exist or has been moved.
                 </p>
                 <Link href="/">
                     <Button size="lg" className="shadow-lg shadow-primary/25 gap-2">

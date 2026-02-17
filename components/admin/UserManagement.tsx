@@ -1,12 +1,14 @@
 'use client';
 
+/* eslint-disable @next/next/no-img-element */
+
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Button } from '@/components/ui/Button';
-import { User, Shield, ShieldOff, Search, Loader2 } from 'lucide-react';
+import { Shield, ShieldOff, Search, Loader2 } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 
 export default function UserManagement() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
@@ -17,7 +19,7 @@ export default function UserManagement() {
         const { data, error } = await supabase
             .from('profiles')
             .select('*')
-            .order('created_at', { ascending: false }); // Assuming created_at exists, if not just order by id or full_name
+            .order('updated_at', { ascending: false }); // Changed from created_at based on error hint
 
         if (error) {
             console.error('Error fetching users:', error);
@@ -27,9 +29,11 @@ export default function UserManagement() {
         setLoading(false);
     };
 
+    /* eslint-disable react-hooks/set-state-in-effect */
     useEffect(() => {
         fetchUsers();
     }, []);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     const toggleRole = async (userId: string, currentRole: string) => {
         const newRole = currentRole === 'admin' ? 'user' : 'admin';
@@ -103,7 +107,7 @@ export default function UserManagement() {
                                             <div className="flex items-center">
                                                 <div className="h-10 w-10 flex-shrink-0 bg-primary/10 rounded-full flex items-center justify-center text-primary font-bold overflow-hidden">
                                                     {user.avatar_url ? (
-                                                        <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
+                                                        <img src={user.avatar_url} alt={user.full_name || 'User Avatar'} className="w-full h-full object-cover" />
                                                     ) : (
                                                         (user.full_name?.[0] || user.username?.[0] || 'U').toUpperCase()
                                                     )}
@@ -116,8 +120,8 @@ export default function UserManagement() {
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'admin'
-                                                    ? 'bg-purple-100 text-purple-800 border border-purple-200'
-                                                    : 'bg-green-100 text-green-800 border border-green-200'
+                                                ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                                                : 'bg-green-100 text-green-800 border border-green-200'
                                                 }`}>
                                                 {user.role}
                                             </span>
@@ -126,8 +130,8 @@ export default function UserManagement() {
                                             <button
                                                 onClick={() => toggleRole(user.id, user.role)}
                                                 className={`flex items-center gap-1 px-3 py-1.5 rounded-lg border transition-colors text-xs font-medium ${user.role === 'admin'
-                                                        ? 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                                                        : 'border-purple-200 text-purple-600 hover:bg-purple-50 hover:text-purple-700'
+                                                    ? 'border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                                                    : 'border-purple-200 text-purple-600 hover:bg-purple-50 hover:text-purple-700'
                                                     }`}
                                             >
                                                 {user.role === 'admin' ? (

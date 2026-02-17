@@ -23,6 +23,7 @@ export async function getBabyProfiles() {
     return data;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function addBabyProfile(profile: any) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -39,6 +40,7 @@ export async function addBabyProfile(profile: any) {
     return { success: true };
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function updateBabyProfile(id: string, updates: any) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

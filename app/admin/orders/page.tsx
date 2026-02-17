@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
-import { Search, Filter, Eye, Clock, CheckCircle, Truck, XCircle } from 'lucide-react';
+import { Search, Eye, Clock, CheckCircle, Truck, XCircle } from 'lucide-react';
 import Link from 'next/link';
 
 const statusColors: Record<string, string> = {
@@ -14,7 +14,7 @@ const statusColors: Record<string, string> = {
     cancelled: 'bg-red-50 text-red-700 border-red-100',
 };
 
-const statusIcons: Record<string, any> = {
+const statusIcons: Record<string, React.ComponentType<{ className?: string }>> = {
     pending: Clock,
     processing: Clock,
     shipped: Truck,
@@ -22,8 +22,17 @@ const statusIcons: Record<string, any> = {
     cancelled: XCircle,
 };
 
+interface Order {
+    id: string;
+    status: string;
+    total_amount: number;
+    created_at: string;
+    shipping_address?: { fullName?: string };
+    profiles?: { email?: string; full_name?: string };
+}
+
 export default function AdminOrders() {
-    const [orders, setOrders] = useState<any[]>([]);
+    const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -32,7 +41,7 @@ export default function AdminOrders() {
     const [hasMore, setHasMore] = useState(true);
     const ORDERS_PER_PAGE = 20;
 
-    const fetchOrders = async () => {
+    const fetchOrders = useCallback(async () => {
         setLoading(true);
         try {
             let query = supabase
@@ -56,22 +65,23 @@ export default function AdminOrders() {
             // Check if there are more items
             setHasMore(count ? from + ORDERS_PER_PAGE < count : false);
             setError(null);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error('Error fetching orders:', err);
-            setError(err.message);
+            setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
             setLoading(false);
         }
-    };
+    }, [page, statusFilter, supabase]);
 
     useEffect(() => {
         fetchOrders();
-    }, [statusFilter, page]);
+    }, [fetchOrders]);
 
     // Reset page when filter changes
     useEffect(() => {
         setPage(1);
     }, [statusFilter]);
+
 
     const filteredOrders = orders.filter(order =>
         order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||

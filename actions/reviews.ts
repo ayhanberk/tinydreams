@@ -29,6 +29,7 @@ export async function getAllReviewsAdmin() {
     // For now, let's just return data. The UI can display user_id or we can fetch profiles here.
     // Fetching profiles is better for UX.
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const reviewsWithProfiles = await Promise.all(data.map(async (review: any) => {
         const { data: profile } = await supabase
             .from('profiles')

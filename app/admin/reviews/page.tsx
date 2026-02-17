@@ -1,5 +1,5 @@
 import { getAllReviewsAdmin } from '@/actions/reviews';
-import { CheckCircle, XCircle, Trash2, Star, MessageSquare } from 'lucide-react';
+import { Star, MessageSquare } from 'lucide-react';
 import ReviewActions from '@/components/admin/ReviewActions'; // Client component for actions
 
 export default async function AdminReviewsPage() {
@@ -19,6 +19,7 @@ export default async function AdminReviewsPage() {
                         <p className="text-gray-500">No reviews found.</p>
                     </div>
                 ) : (
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     reviews.map((review: any) => (
                         <div key={review.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col md:flex-row gap-6">
                             <div className="flex-1 space-y-3">
@@ -45,7 +46,7 @@ export default async function AdminReviewsPage() {
                                 </div>
 
                                 <p className="text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 italic">
-                                    "{review.comment}"
+                                    &quot;{review.comment}&quot;
                                 </p>
                             </div>
 

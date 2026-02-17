@@ -6,6 +6,7 @@ import { Mail, Save, Loader2, Eye, EyeOff } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 
 interface AdminSettingsFormProps {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     initialSettings: Record<string, any>;
 }
 

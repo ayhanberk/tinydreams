@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Heart } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
-import { motion } from 'framer-motion';
 
 interface WishlistButtonProps {
     productId: string;

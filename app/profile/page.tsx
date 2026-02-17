@@ -1,6 +1,7 @@
 import { getUserProfile, getUserOrders } from '@/actions/profile';
-import { Package, MapPin, Heart, Baby, Settings } from 'lucide-react';
+import { Package, MapPin, Heart, Settings } from 'lucide-react';
 import Link from 'next/link';
+import FamilySection from '@/components/profile/FamilySection';
 
 export default async function ProfileDashboard() {
     const profile = await getUserProfile();
@@ -20,21 +21,10 @@ export default async function ProfileDashboard() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <Link href="/profile/family" className="block group">
-                    <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-full hover:border-pink-200 transition-colors">
-                        <div className="flex items-center gap-4 mb-4">
-                            <div className="p-3 bg-pink-50 rounded-xl group-hover:bg-pink-100 transition-colors">
-                                <Baby className="w-6 h-6 text-pink-500" />
-                            </div>
-                            <h2 className="text-lg font-semibold text-gray-800">My Family</h2>
-                        </div>
-                        <p className="text-gray-500">
-                            Add your children to get personalized product recommendations.
-                        </p>
-                    </div>
-                </Link>
+            {/* Quick Family Access */}
+            <FamilySection />
 
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 border-t border-gray-100">
                 <Link href="/profile/orders" className="block group">
                     <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 h-full hover:border-blue-200 transition-colors">
                         <div className="flex items-center gap-4 mb-4">
@@ -102,4 +92,3 @@ export default async function ProfileDashboard() {
         </div>
     );
 }
-

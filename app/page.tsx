@@ -3,12 +3,17 @@ import CategoryGrid from '@/components/home/CategoryGrid';
 import TrustSignals from '@/components/home/TrustSignals';
 import BlogPreview from '@/components/home/BlogPreview';
 import ProductCard from '@/components/ui/ProductCard';
-import { getFeaturedProducts } from '@/actions/products';
+import { getFeaturedProducts, getRecommendedProducts } from '@/actions/products';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
 
 export default async function Home() {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
   const featuredProducts = await getFeaturedProducts();
+  const recommendedProducts = user ? await getRecommendedProducts(user.id) : [];
 
   return (
     <div className="min-h-screen bg-white">
@@ -20,6 +25,32 @@ export default async function Home() {
 
       {/* Categories Grid */}
       <CategoryGrid />
+
+      {/* Smart Recommendations */}
+      {recommendedProducts.length > 0 && (
+        <section className="py-20 bg-white border-b border-gray-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-end mb-12">
+              <div className="max-w-2xl">
+                <span className="text-primary font-semibold tracking-wide text-sm uppercase">Just for you</span>
+                <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 mt-2">Recommended for Your Little One</h2>
+                <p className="text-gray-500 text-lg">
+                  Curated picks based on your family profile.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {recommendedProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  {...product}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Featured Products Section */}
       <section className="py-20 bg-gray-50">
@@ -38,7 +69,7 @@ export default async function Home() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {featuredProducts.length > 0 ? (
-              featuredProducts.map((product: any) => (
+              featuredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
                   {...product}

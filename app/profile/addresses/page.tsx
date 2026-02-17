@@ -1,5 +1,5 @@
-import { getUserAddresses, deleteUserAddress } from '@/actions/profile';
-import AddressForm from '@/components/profile/AddressForm';
+import { getUserAddresses } from '@/actions/profile';
+
 import AddressListModule from '@/components/profile/AddressListModule'; // Client component for list to handle mutations if needed, or just server render + client delete buttons
 import { MapPin } from 'lucide-react';
 

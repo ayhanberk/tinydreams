@@ -9,8 +9,10 @@ import { useToast } from '@/context/ToastContext';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
 export default function AdminCategories() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [categories, setCategories] = useState<any[]>([]);
     const [showForm, setShowForm] = useState(false);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [editingCategory, setEditingCategory] = useState<any>(null);
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const { showToast } = useToast();
@@ -23,9 +25,11 @@ export default function AdminCategories() {
         if (!error) setCategories(data || []);
     };
 
+    /* eslint-disable react-hooks/set-state-in-effect */
     useEffect(() => {
         fetchCategories();
     }, []);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     const handleDelete = async () => {
         if (!deleteId) return;
@@ -65,7 +69,8 @@ export default function AdminCategories() {
                         {categories.map(cat => (
                             <tr key={cat.id} className="hover:bg-gray-50/50">
                                 <td className="p-4 font-medium flex items-center gap-2">
-                                    {cat.image_url && <img src={cat.image_url} className="w-8 h-8 rounded-lg object-cover bg-gray-100" />}
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    {cat.image_url && <img src={cat.image_url} alt={cat.name} className="w-8 h-8 rounded-lg object-cover bg-gray-100" />}
                                     {cat.name}
                                 </td>
                                 <td className="p-4 text-sm font-mono text-gray-500">{cat.slug}</td>

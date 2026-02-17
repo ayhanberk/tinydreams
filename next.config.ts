@@ -11,6 +11,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'www.transparenttextures.com',
       },
+      {
+        protocol: 'https',
+        hostname: 'dkcojubsjpbunwxqxnwh.supabase.co',
+      },
+      {
+        protocol: 'https',
+        hostname: 'plus.unsplash.com',
+      },
     ],
   },
 };

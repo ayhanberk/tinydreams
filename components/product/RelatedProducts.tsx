@@ -10,6 +10,7 @@ interface RelatedProductsProps {
 }
 
 export default function RelatedProducts({ categoryId, currentProductId }: RelatedProductsProps) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [products, setProducts] = useState<any[]>([]);
 
     useEffect(() => {

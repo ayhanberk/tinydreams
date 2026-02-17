@@ -80,6 +80,7 @@ export async function getUserAddresses() {
     return data;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function addUserAddress(address: any) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

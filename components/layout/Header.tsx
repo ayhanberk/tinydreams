@@ -6,15 +6,23 @@ import { Menu, X, ShoppingCart, User, Settings, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/context/CartContext';
 import { useAuth } from '@/context/AuthContext';
+import { useTranslation } from '@/context/LanguageContext';
 import { supabase } from '@/lib/supabase';
 import NotificationCenter from '@/components/layout/NotificationCenter';
+import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
+
+interface Category {
+    id: string;
+    name: string;
+}
 
 const Header = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
     const { toggleCart, cartCount } = useCart();
     const { user, profile, signOut } = useAuth();
-    const [categories, setCategories] = useState<any[]>([]);
+    const { t } = useTranslation();
+    const [categories, setCategories] = useState<Category[]>([]);
     const [showShopMenu, setShowShopMenu] = useState(false);
 
     useEffect(() => {
@@ -27,10 +35,10 @@ const Header = () => {
         const fetchCategories = async () => {
             const { data } = await supabase
                 .from('categories')
-                .select('*')
+                .select('id, name')
                 .is('parent_id', null) // Fetch top-level categories
                 .order('name');
-            if (data) setCategories(data);
+            if (data) setCategories(data as Category[]);
         };
         fetchCategories();
 
@@ -38,10 +46,10 @@ const Header = () => {
     }, []);
 
     const navLinks = [
-        { name: 'Home', href: '/' },
+        { name: t('nav.home'), href: '/' },
         // Shop link is special now
-        { name: 'About', href: '/about' },
-        { name: 'Contact', href: '/contact' },
+        { name: t('nav.about'), href: '/about' },
+        { name: t('nav.contact'), href: '/contact' },
     ];
 
     return (
@@ -114,6 +122,7 @@ const Header = () => {
                 {/* Icons */}
                 <div className="hidden md:flex items-center space-x-2">
                     <NotificationCenter />
+                    <LanguageSwitcher />
                     <button
                         className="p-2 hover:bg-secondary/10 rounded-full transition-colors relative"
                         onClick={toggleCart}
@@ -128,19 +137,19 @@ const Header = () => {
                     {user ? (
                         <div className="flex items-center space-x-4">
                             {profile?.role === 'admin' && (
-                                <Link href="/admin/overview" className="p-2 hover:bg-purple-50 rounded-full transition-colors group" title="Admin Panel">
+                                <Link href="/admin/overview" className="p-2 hover:bg-purple-50 rounded-full transition-colors group" title={t('nav.admin_panel')}>
                                     <Settings className="w-5 h-5 text-purple-600 group-hover:rotate-45 transition-transform" />
                                 </Link>
                             )}
-                            <Link href="/profile" className="p-2 hover:bg-secondary/10 rounded-full transition-colors">
+                            <Link href="/profile" className="p-2 hover:bg-secondary/10 rounded-full transition-colors" title={t('nav.dashboard')}>
                                 <User className="w-5 h-5 text-primary font-bold" />
                             </Link>
                             <button onClick={signOut} className="text-sm text-gray-500 hover:text-red-500 transition-colors">
-                                Sign Out
+                                {t('nav.sign_out')}
                             </button>
                         </div>
                     ) : (
-                        <Link href="/auth/login" className="p-2 hover:bg-secondary/10 rounded-full transition-colors">
+                        <Link href="/auth/login" className="p-2 hover:bg-secondary/10 rounded-full transition-colors" title={t('nav.login')}>
                             <User className="w-5 h-5 text-foreground" />
                         </Link>
                     )}

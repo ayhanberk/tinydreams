@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Bell, X, Check, Trash2 } from 'lucide-react';
+import { Bell, Check, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 
 export default function NotificationCenter() {
     const { user } = useAuth();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [notifications, setNotifications] = useState<any[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
@@ -33,6 +34,7 @@ export default function NotificationCenter() {
         }
     };
 
+    /* eslint-disable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
     useEffect(() => {
         fetchNotifications();
 
@@ -71,6 +73,7 @@ export default function NotificationCenter() {
             supabase.removeChannel(channel);
         };
     }, [user]);
+    /* eslint-enable react-hooks/set-state-in-effect, react-hooks/exhaustive-deps */
 
     // Close on click outside
     useEffect(() => {

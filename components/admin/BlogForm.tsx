@@ -8,8 +8,18 @@ import { Loader2, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useToast } from '@/context/ToastContext';
 
+interface BlogPostData {
+    id?: string;
+    title?: string;
+    slug?: string;
+    content?: string;
+    excerpt?: string;
+    cover_image?: string;
+    is_published?: boolean;
+}
+
 interface BlogFormProps {
-    initialData?: any;
+    initialData?: BlogPostData;
 }
 
 export default function BlogForm({ initialData }: BlogFormProps) {
@@ -59,9 +69,9 @@ export default function BlogForm({ initialData }: BlogFormProps) {
             }
             router.push('/admin/blog');
             router.refresh();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error(error);
-            showToast(error.message, 'error');
+            showToast(error instanceof Error ? error.message : 'An error occurred', 'error');
         } finally {
             setIsLoading(false);
         }

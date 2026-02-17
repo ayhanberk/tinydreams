@@ -62,7 +62,7 @@ export default function LoginPage() {
                 </form>
 
                 <div className="mt-8 text-center text-sm text-gray-500">
-                    <p>Don't have an account? <Link href="/auth/signup" className="text-primary font-semibold hover:underline">Sign up</Link></p>
+                    <p>Don&apos;t have an account?{' '}<Link href="/auth/signup" className="text-primary font-semibold hover:underline">Sign up</Link></p>
                 </div>
 
                 <div className="mt-8 relative flex items-center justify-center">
@@ -76,6 +76,7 @@ export default function LoginPage() {
                         disabled={loading}
                         className="w-full flex items-center justify-center px-4 py-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors bg-white shadow-sm"
                     >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="h-5 w-5 mr-3" alt="Google" />
                         <span className="text-sm font-medium text-gray-700">Sign in with Google</span>
                     </button>

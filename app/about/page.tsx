@@ -38,7 +38,7 @@ export default function AboutPage() {
                             We are dedicated to providing premium quality baby products that blend functionality with beautiful design. We understand the joys and challenges of parenting, which is why every item in our collection is carefully curated and rigorously tested.
                         </p>
                         <p className="text-gray-600 text-lg leading-relaxed">
-                            From our softest organic cottons to our innovative nursery essentials, we are here to support you through every milestone of your little one's growth.
+                            From our softest organic cottons to our innovative nursery essentials, we are here to support you through every milestone of your little one&apos;s growth.
                         </p>
                     </div>
                 </div>
@@ -66,7 +66,7 @@ export default function AboutPage() {
                             </div>
                             <h3 className="text-xl font-bold text-gray-900 mb-4">Made with Love</h3>
                             <p className="text-gray-600">
-                                Crafted with care and attention to detail. We choose soft, durable fabrics that are gentle on your baby's delicate skin.
+                                Crafted with care and attention to detail. We choose soft, durable fabrics that are gentle on your baby&apos;s delicate skin.
                             </p>
                         </div>
                         <div className="bg-white p-8 rounded-2xl shadow-sm text-center transform hover:-translate-y-2 transition-transform duration-300">

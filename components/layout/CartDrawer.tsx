@@ -5,6 +5,7 @@ import { useCart } from '@/context/CartContext';
 import { X, Trash2, ShoppingBag } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const CartDrawer = () => {
     const { isCartOpen, toggleCart, items, removeFromCart, updateQuantity, cartTotal } = useCart();
@@ -55,8 +56,14 @@ const CartDrawer = () => {
                             ) : (
                                 items.map((item) => (
                                     <div key={item.id} className="flex space-x-4 p-3 bg-gray-50 rounded-xl hover:bg-white hover:shadow-sm border border-transparent hover:border-gray-100 transition-all">
-                                        <div className="w-20 h-20 bg-white rounded-lg overflow-hidden border border-gray-100 flex-shrink-0">
-                                            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
+                                        <div className="w-20 h-20 bg-white rounded-lg overflow-hidden border border-gray-100 flex-shrink-0 relative">
+                                            <Image
+                                                src={item.image}
+                                                alt={item.title}
+                                                fill
+                                                className="object-cover"
+                                                sizes="80px"
+                                            />
                                         </div>
                                         <div className="flex-1 flex flex-col justify-between">
                                             <div>

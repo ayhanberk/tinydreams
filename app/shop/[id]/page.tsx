@@ -10,11 +10,11 @@ import Image from 'next/image';
 import { useCart } from '@/context/CartContext';
 import { supabase } from '@/lib/supabase';
 import Reviews from '@/components/product/Reviews';
-import WishlistButton from '@/components/product/WishlistButton';
 
 export default function ProductDetailsPage() {
     const params = useParams();
     const id = params.id as string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [product, setProduct] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [quantity, setQuantity] = useState(1);

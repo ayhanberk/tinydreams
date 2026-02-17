@@ -24,6 +24,7 @@ export default async function BlogPreview() {
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
                     {latestPosts.map((post: any) => (
                         <Link
                             href={`/blog/${post.slug}`}

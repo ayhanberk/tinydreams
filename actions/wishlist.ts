@@ -33,12 +33,12 @@ export async function removeFromWishlist(productId: string) {
 
     if (!user) throw new Error('Unauthorized');
 
-    const { error } = await supabase
+    const { error: _error } = await supabase
         .from('wishlists')
         .delete()
         .match({ user_id: user.id, product_id: productId });
 
-    if (error) throw new Error(error.message);
+    if (_error) throw new Error(_error.message);
 
     revalidatePath('/wishlist');
     revalidatePath(`/shop/${productId}`);
@@ -51,7 +51,7 @@ export async function getWishlist() {
 
     if (!user) return [];
 
-    const { data, error } = await supabase
+    const { data, error: _error } = await supabase
         .from('wishlists')
         .select(`
             product_id,
@@ -70,9 +70,10 @@ export async function getWishlist() {
         `)
         .eq('user_id', user.id);
 
-    if (error) throw new Error(error.message);
+    if (_error) throw new Error(_error.message);
 
     // Flatten and Map structure for ProductCard
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return data.map((item: any) => {
         const p = item.products;
         return {
@@ -93,7 +94,7 @@ export async function checkInWishlist(productId: string) {
 
     if (!user) return false;
 
-    const { data, error } = await supabase
+    const { data } = await supabase
         .from('wishlists')
         .select('id')
         .match({ user_id: user.id, product_id: productId })

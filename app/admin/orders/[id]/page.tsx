@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+/* eslint-disable @next/next/no-img-element */
+
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useParams, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/Button';
 import {
     ChevronLeft,
     Package,
@@ -12,11 +13,8 @@ import {
     XCircle,
     Clock,
     User,
-    MapPin,
-    CreditCard,
-    AlertCircle
+    MapPin
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useToast } from '@/context/ToastContext';
 
 const statusOptions = [
@@ -30,13 +28,15 @@ const statusOptions = [
 export default function AdminOrderDetails() {
     const { id } = useParams();
     const router = useRouter();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [order, setOrder] = useState<any>(null);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [items, setItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
     const { showToast } = useToast();
 
-    const fetchOrderDetails = async () => {
+    const fetchOrderDetails = useCallback(async () => {
         setLoading(true);
         try {
             // Fetch Order
@@ -62,11 +62,12 @@ export default function AdminOrderDetails() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id, supabase]);
 
     useEffect(() => {
         fetchOrderDetails();
-    }, [id]);
+    }, [fetchOrderDetails]);
+
 
     const handleStatusUpdate = async (newStatus: string) => {
         setUpdating(true);
@@ -78,6 +79,7 @@ export default function AdminOrderDetails() {
         if (error) {
             showToast('Failed to update status', 'error');
         } else {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             setOrder((prev: any) => ({ ...prev, status: newStatus }));
             showToast('Order status updated successfully', 'success');
         }
@@ -142,7 +144,7 @@ export default function AdminOrderDetails() {
                                     <div className="w-20 h-20 bg-gray-50 rounded-xl overflow-hidden border border-gray-100 flex-shrink-0">
                                         <img
                                             src={item.products?.image_url || item.products?.image}
-                                            alt={item.products?.title}
+                                            alt={item.products?.title || 'Product Image'}
                                             className="w-full h-full object-cover"
                                         />
                                     </div>

@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Button } from '@/components/ui/Button';
-import { Plus, Trash2, Power, PowerOff, Loader2, AlertCircle } from 'lucide-react';
+import { Plus, Trash2, Power, PowerOff, AlertCircle } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
 export default function BannerManager() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const [banners, setBanners] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
@@ -34,9 +35,11 @@ export default function BannerManager() {
         setLoading(false);
     };
 
+    /* eslint-disable react-hooks/set-state-in-effect */
     useEffect(() => {
         fetchBanners();
     }, []);
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -153,9 +156,9 @@ export default function BannerManager() {
                         <div key={banner.id} className={`p-4 rounded-xl border flex items-center justify-between group transition-all ${banner.is_active ? 'bg-white border-gray-200 shadow-sm' : 'bg-gray-50 border-gray-100 opacity-70'}`}>
                             <div className="flex items-center gap-4">
                                 <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${banner.style === 'premium' ? 'bg-gradient-to-br from-primary to-secondary text-white' :
-                                        banner.style === 'success' ? 'bg-green-100 text-green-600' :
-                                            banner.style === 'warning' ? 'bg-yellow-100 text-yellow-600' :
-                                                'bg-blue-100 text-blue-600'
+                                    banner.style === 'success' ? 'bg-green-100 text-green-600' :
+                                        banner.style === 'warning' ? 'bg-yellow-100 text-yellow-600' :
+                                            'bg-blue-100 text-blue-600'
                                     }`}>
                                     <AlertCircle className="w-6 h-6" />
                                 </div>

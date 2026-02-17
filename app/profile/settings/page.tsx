@@ -1,5 +1,5 @@
 import { getUserProfile } from '@/actions/profile';
-import { Settings, User, Mail, Shield } from 'lucide-react';
+import { Settings, User, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 export default async function SettingsPage() {
@@ -57,7 +57,7 @@ export default async function SettingsPage() {
 
                     <div className="space-y-4 max-w-md">
                         <p className="text-sm text-gray-500">
-                            We'll send you an email to reset your password if you wish to change it.
+                            We&apos;ll send you an email to reset your password if you wish to change it.
                         </p>
                         <Button variant="outline">Change Password</Button>
                     </div>
