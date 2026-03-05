@@ -87,7 +87,13 @@ export const LanguageProvider = ({ children }: { children: React.ReactNode }) =>
 
     return (
         <LanguageContext.Provider value={{ locale, setLocale, t, languages, loading }}>
-            {children}
+            {loading ? (
+                <div className="flex flex-col h-screen w-full items-center justify-center bg-background/50 backdrop-blur-sm fixed inset-0 z-[9999]">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+                </div>
+            ) : (
+                children
+            )}
         </LanguageContext.Provider>
     );
 };

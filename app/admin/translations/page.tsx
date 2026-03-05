@@ -106,63 +106,161 @@ export default function AdminTranslations() {
         }
     };
 
-    // CSV Export
-    const handleExportCSV = () => {
-        const headers = ['namespace,key,value'];
-        const rows = translations.map(t => `${t.namespace},${t.key},"${t.value.replace(/"/g, '""')}"`);
-        const csvContent = headers.concat(rows).join('\n');
+    // Matrix CSV Export
+    const handleExportCSV = async () => {
+        setLoading(true);
+        // Fetch ALL translations to export them all
+        const { data: allTrans } = await supabase.from('translations').select('*');
+        const { data: allLangs } = await supabase.from('supported_languages').select('code').order('code');
 
+        if (!allTrans || !allLangs) {
+            alert("Failed to fetch translations for export.");
+            setLoading(false);
+            return;
+        }
+
+        const langCodes = allLangs.map(l => l.code);
+        const grouped = {} as Record<string, Record<string, string>>;
+
+        for (const t of allTrans) {
+            const path = `${t.namespace}.${t.key}`;
+            if (!grouped[path]) grouped[path] = {};
+            // Encode value for CSV (escape double quotes)
+            let val = t.value || "";
+            val = val.replace(/"/g, '""');
+            if (val.includes(',') || val.includes('"') || val.includes('\n')) {
+                val = `"${val}"`;
+            }
+            grouped[path][t.locale] = val;
+        }
+
+        const headers = ['namespace', 'key', ...langCodes].join(',');
+        const sortedKeys = Object.keys(grouped).sort();
+
+        const rows = sortedKeys.map(fullKey => {
+            const [namespace, key] = fullKey.split('.');
+            let row = `${namespace},${key}`;
+            for (const code of langCodes) {
+                row += `,${grouped[fullKey][code] || ""}`;
+            }
+            return row;
+        });
+
+        const csvContent = [headers, ...rows].join('\n');
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.setAttribute('download', `translations_${selectedLocale}.csv`);
+        link.setAttribute('download', `translations_all.csv`);
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
+        setLoading(false);
     };
 
-    // CSV Import
+    // Matrix CSV Parser Helper
+    const parseCSV = (text: string) => {
+        const rows = [];
+        let currentRow = [];
+        let currentCell = '';
+        let inQuotes = false;
+        for (let i = 0; i < text.length; i++) {
+            const char = text[i];
+            const nextChar = text[i + 1];
+            if (char === '"') {
+                if (inQuotes && nextChar === '"') {
+                    currentCell += '"';
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (char === ',' && !inQuotes) {
+                currentRow.push(currentCell.trim());
+                currentCell = '';
+            } else if ((char === '\n' || char === '\r') && !inQuotes) {
+                if (char === '\r' && nextChar === '\n') i++;
+                currentRow.push(currentCell.trim());
+                if (currentRow.some(c => c !== '')) rows.push(currentRow);
+                currentRow = [];
+                currentCell = '';
+            } else {
+                currentCell += char;
+            }
+        }
+        if (currentCell || currentRow.length > 0) {
+            currentRow.push(currentCell.trim());
+            rows.push(currentRow);
+        }
+        return rows;
+    };
+
+    // Matrix CSV Import
     const handleImportCSV = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
+        setLoading(true);
         const reader = new FileReader();
         reader.onload = async (event) => {
             const text = event.target?.result as string;
-            const lines = text.split('\n');
-            // Skip header
-            const rows = lines.slice(1).filter(line => line.trim() !== '');
+            const rows = parseCSV(text);
+
+            if (rows.length < 2) {
+                alert("Invalid or empty CSV.");
+                setLoading(false);
+                return;
+            }
+
+            const header = rows[0]; // [namespace, key, en, tr, de...]
+            const csvLanguageCodes = header.slice(2);
+
+            // Check for new languages and insert them
+            const existingCodes = languages.map(l => l.code);
+            for (const csvCode of csvLanguageCodes) {
+                if (!existingCodes.includes(csvCode) && csvCode.trim() !== '') {
+                    // It's a brand new language!
+                    console.log("New language detected:", csvCode);
+                    await supabase.from('supported_languages').upsert({
+                        code: csvCode.trim().toLowerCase(),
+                        name: csvCode.trim().toUpperCase(),
+                        flag: '🌐', // Generic flag for automatically added languages
+                        is_default: false
+                    }, { onConflict: 'code' });
+                }
+            }
 
             let successCount = 0;
             let failCount = 0;
 
-            for (const row of rows) {
-                // Simple CSV parser logic (handles basic quotes)
-                // const parts = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || [];
-                // const namespace = parts[0]?.replace(/^"|"$/g, '');
+            // Start from row 1 (ignore header)
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const namespace = row[0];
+                const key = row[1];
+                if (!namespace || !key) continue;
 
-                // Proper split by comma respecting quotes is harder, let's assume simple format for now or use library
-                // Simpler split for Prototype:
-                const [ns, k, ...vParts] = row.split(',');
-                const val = vParts.join(',').replace(/^"|"$/g, '').replace(/""/g, '"');
+                for (let c = 0; c < csvLanguageCodes.length; c++) {
+                    const locale = csvLanguageCodes[c];
+                    const value = row[2 + c];
 
-                if (ns && k && val) {
-                    const { error } = await supabase
-                        .from('translations')
-                        .upsert({
-                            locale: selectedLocale,
-                            namespace: ns.trim(),
-                            key: k.trim(),
-                            value: val.trim()
+                    if (value !== undefined && value !== '') {
+                        const { error } = await supabase.from('translations').upsert({
+                            locale: locale.trim(),
+                            namespace: namespace.trim(),
+                            key: key.trim(),
+                            value: value.trim()
                         }, { onConflict: 'locale,namespace,key' });
 
-                    if (!error) successCount++;
-                    else failCount++;
+                        if (!error) successCount++;
+                        else failCount++;
+                    }
                 }
             }
 
+            // Reset file input
+            e.target.value = '';
             alert(`Import finished: ${successCount} imported, ${failCount} failed.`);
+            fetchLanguages(); // Refresh languages array in case new ones were added
             fetchTranslations();
         };
         reader.readAsText(file);
@@ -183,11 +281,11 @@ export default function AdminTranslations() {
                     <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                         Translation Manager
                     </h1>
-                    <p className="text-gray-500 mt-1">Manage languages and text resources</p>
+                    <p className="text-gray-500 mt-1">Manage all text resources across languages via CSV</p>
                 </div>
 
                 <div className="flex items-center gap-3 bg-white p-2 rounded-lg shadow-sm border border-gray-100">
-                    <span className="text-sm font-medium text-gray-500 pl-2">Locale:</span>
+                    <span className="text-sm font-medium text-gray-500 pl-2">View Locale:</span>
                     <select
                         value={selectedLocale}
                         onChange={(e) => setSelectedLocale(e.target.value)}
@@ -201,7 +299,7 @@ export default function AdminTranslations() {
             </div>
 
             {/* Actions Bar */}
-            <div className="flex flex-wrap gap-4 mb-6 justify-between items-center">
+            <div className="flex flex-wrap gap-4 mb-6 justify-between items-center bg-blue-50/50 p-4 border border-blue-100 rounded-xl">
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                     <input
@@ -213,23 +311,26 @@ export default function AdminTranslations() {
                     />
                 </div>
 
-                <div className="flex gap-2">
-                    <Button variant="outline" onClick={handleExportCSV} className="gap-2">
-                        <Download className="w-4 h-4" /> Export CSV
-                    </Button>
-                    <div className="relative">
-                        <input
-                            type="file"
-                            accept=".csv"
-                            onChange={handleImportCSV}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                        />
-                        <Button variant="secondary" className="gap-2">
-                            <Upload className="w-4 h-4" /> Import CSV
+                <div className="flex gap-3">
+                    <div className="flex gap-2 border-r border-gray-200 pr-3 mr-1">
+                        <Button variant="outline" onClick={handleExportCSV} className="gap-2 bg-white hover:bg-gray-50 shadow-sm">
+                            <Download className="w-4 h-4" /> Export All (CSV)
                         </Button>
+                        <div className="relative group overflow-hidden">
+                            <input
+                                type="file"
+                                accept=".csv"
+                                onChange={handleImportCSV}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                                title="Import an edited translation CSV"
+                            />
+                            <Button variant="secondary" className="gap-2 shadow-sm pointer-events-none">
+                                <Upload className="w-4 h-4" /> Import CSV
+                            </Button>
+                        </div>
                     </div>
-                    <Button onClick={() => setIsAdding(true)} className="gap-2">
-                        <Plus className="w-4 h-4" /> Add New
+                    <Button onClick={() => setIsAdding(true)} className="gap-2 shadow-sm">
+                        <Plus className="w-4 h-4" /> Single Key
                     </Button>
                 </div>
             </div>
@@ -239,85 +340,87 @@ export default function AdminTranslations() {
                 <motion.div
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
-                    className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-6"
+                    className="bg-white border border-gray-200 shadow-md rounded-xl p-6 mb-6"
                 >
-                    <h3 className="font-semibold mb-3">Add New Translation ({selectedLocale})</h3>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+                    <h3 className="font-semibold mb-3 text-lg text-gray-800">Add New Translation ({selectedLocale})</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                         <input
-                            placeholder="Namespace (e.g. nav)"
-                            className="border p-2 rounded"
+                            placeholder="Namespace (e.g. hero)"
+                            className="border border-gray-200 px-3 py-2 rounded focus:ring-2 focus:ring-primary/20 outline-none"
                             value={newTrans.namespace}
                             onChange={e => setNewTrans({ ...newTrans, namespace: e.target.value })}
                         />
                         <input
-                            placeholder="Key (e.g. home)"
-                            className="border p-2 rounded"
+                            placeholder="Key (e.g. title)"
+                            className="border border-gray-200 px-3 py-2 rounded focus:ring-2 focus:ring-primary/20 outline-none"
                             value={newTrans.key}
                             onChange={e => setNewTrans({ ...newTrans, key: e.target.value })}
                         />
                         <input
-                            placeholder="Value (e.g. Home)"
-                            className="border p-2 rounded"
+                            placeholder="Value (e.g. Welcome)"
+                            className="border border-gray-200 px-3 py-2 rounded focus:ring-2 focus:ring-primary/20 outline-none"
                             value={newTrans.value}
                             onChange={e => setNewTrans({ ...newTrans, value: e.target.value })}
                         />
                     </div>
-                    <div className="flex justify-end gap-2">
-                        <Button variant="ghost" onClick={() => setIsAdding(false)} size="sm">Cancel</Button>
-                        <Button onClick={handleAdd} size="sm">Save</Button>
+                    <div className="flex justify-end gap-3 pt-2 border-t border-gray-100">
+                        <Button variant="ghost" onClick={() => setIsAdding(false)}>Cancel</Button>
+                        <Button onClick={handleAdd}>Save to {selectedLocale.toUpperCase()}</Button>
                     </div>
                 </motion.div>
             )}
 
             {/* Translations Table */}
-            <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <table className="w-full text-left border-collapse">
-                    <thead className="bg-gray-50 border-b border-gray-100 text-xs text-gray-500 uppercase">
+                    <thead className="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                         <tr>
-                            <th className="p-4">Namespace</th>
-                            <th className="p-4">Key</th>
-                            <th className="p-4">Value ({selectedLocale})</th>
-                            <th className="p-4">Actions</th>
+                            <th className="p-4 px-6 w-3/12">Namespace</th>
+                            <th className="p-4 w-3/12">Key</th>
+                            <th className="p-4 w-4/12">Value ({selectedLocale.toUpperCase()})</th>
+                            <th className="p-4 w-2/12 text-right">Actions</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100 text-sm">
                         {loading ? (
-                            <tr><td colSpan={4} className="p-8 text-center text-gray-500"><Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />Loading translations...</td></tr>
+                            <tr><td colSpan={4} className="p-12 text-center text-gray-500"><Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />Loading translations database...</td></tr>
                         ) : filteredTranslations.length === 0 ? (
-                            <tr><td colSpan={4} className="p-8 text-center text-gray-500">No translations found.</td></tr>
+                            <tr><td colSpan={4} className="p-12 text-center text-gray-500">No translations found for this locale.</td></tr>
                         ) : (
                             filteredTranslations.map(t => (
-                                <tr key={t.id} className="hover:bg-gray-50/50">
-                                    <td className="p-4 text-gray-500 font-mono text-xs">{t.namespace}</td>
-                                    <td className="p-4 font-medium text-gray-700">{t.key}</td>
+                                <tr key={t.id} className="hover:bg-gray-50/70 transition-colors">
+                                    <td className="p-4 px-6 text-gray-400 font-mono text-xs"><span className="bg-gray-100 px-2 py-1 rounded">{t.namespace}</span></td>
+                                    <td className="p-4 font-medium text-gray-800">{t.key}</td>
                                     <td className="p-4">
                                         {editingId === t.id ? (
-                                            <div className="flex gap-2">
+                                            <div className="flex gap-2 w-full">
                                                 <input
-                                                    className="border border-primary rounded px-2 py-1 w-full"
+                                                    className="border border-primary rounded-md px-3 py-1.5 w-full bg-white shadow-sm focus:outline-none focus:ring-1 focus:ring-primary"
                                                     value={editValue}
                                                     onChange={e => setEditValue(e.target.value)}
                                                     autoFocus
                                                 />
-                                                <button onClick={() => handleUpdate(t.id)} className="text-green-600 hover:bg-green-50 p-1 rounded"><Save className="w-4 h-4" /></button>
-                                                <button onClick={() => setEditingId(null)} className="text-gray-400 hover:bg-gray-100 p-1 rounded"><X className="w-4 h-4" /></button>
+                                                <button onClick={() => handleUpdate(t.id)} className="text-white bg-green-500 hover:bg-green-600 p-1.5 rounded-md shadow-sm transition-colors"><Save className="w-4 h-4" /></button>
+                                                <button onClick={() => setEditingId(null)} className="text-gray-500 bg-gray-100 hover:bg-gray-200 p-1.5 rounded-md shadow-sm transition-colors"><X className="w-4 h-4" /></button>
                                             </div>
                                         ) : (
-                                            <span className="text-gray-600">{t.value}</span>
+                                            <span className="text-gray-600 line-clamp-2" title={t.value}>{t.value}</span>
                                         )}
                                     </td>
                                     <td className="p-4">
                                         {editingId !== t.id && (
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center justify-end gap-2 pr-2">
                                                 <button
                                                     onClick={() => { setEditingId(t.id); setEditValue(t.value); }}
-                                                    className="p-1.5 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                                                    className="p-1.5 text-blue-600 bg-blue-50/50 hover:bg-blue-100 rounded-lg transition-colors border border-blue-100/50"
+                                                    title="Edit"
                                                 >
                                                     <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(t.id)}
-                                                    className="p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+                                                    className="p-1.5 text-red-500 bg-red-50/50 hover:bg-red-100 rounded-lg transition-colors border border-red-100/50"
+                                                    title="Delete"
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
